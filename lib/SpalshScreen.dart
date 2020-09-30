@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:flutter/material.dart';
 import 'package:htg/CreateContest.dart';
 import 'package:htg/HomeScreen.dart';
@@ -15,6 +18,9 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    final FirebaseMessaging _fcm = FirebaseMessaging();
+
+    _fcm.getToken().then((value) => print(value));
 
     getStringValuesSF().then((value) {
       if (value == null) {
