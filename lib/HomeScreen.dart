@@ -11,9 +11,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextStyle style = TextStyle(
-      fontFamily: 'Poppins-Regular', fontSize: 10.0, color: Colors.orange);
+      fontFamily: 'Poppins-Regular', fontSize: 14.0, color: Colors.orange);
  TextStyle hintstyle = TextStyle(
-      fontFamily: 'Poppins-Regular', fontSize: 10.0, color: Colors.grey);
+      fontFamily: 'Poppins-Regular', fontSize: 14.0, color: Colors.grey);
 
   @override
   Widget build(BuildContext context) {
@@ -29,19 +29,19 @@ class _HomeScreenState extends State<HomeScreen> {
             fontWeight: FontWeight.bold));
     final ORloginintext = Text("OR Login via",
         style: TextStyle(
-            fontFamily: 'Poppins', fontSize: 15.0, color: Colors.orange));
+            fontFamily: 'Poppins', fontSize: 20.0, color: Colors.orange));
 
     final Havearefferealcodetext = Text("Have a Reffral\nCode?",
         style: TextStyle(
-            fontFamily: 'Poppins', fontSize: 10.0, color: Colors.orange));
+            fontFamily: 'Poppins', fontSize: 14.0, color: Colors.orange));
 
     final donthaveaccounttext = Text("Don't have an\naccount?Sign Up",
         style: TextStyle(
-            fontFamily: 'Poppins', fontSize: 10.0, color: Colors.orange));
+            fontFamily: 'Poppins', fontSize: 14.0, color: Colors.orange));
 
     final forgotpasswordtext = Text("forgot password?",
         style: TextStyle(
-            fontFamily: 'Poppins', fontSize: 10.0, color: Colors.grey));
+            fontFamily: 'Poppins', fontSize: 14.0, color: Colors.grey));
 
     const border = Border(
       top: BorderSide(width: 1.0, color: Colors.orange),
@@ -138,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Text("Facebook",
                                 style: TextStyle(
                                     fontFamily: 'Poppins',
-                                    fontSize: 10.0,
+                                    fontSize: 14.0,
                                     color: Colors.grey))),
                         new Container(
                             margin: const EdgeInsets.all(15.0),
@@ -147,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Text("Google",
                                 style: TextStyle(
                                     fontFamily: 'Poppins',
-                                    fontSize: 10.0,
+                                    fontSize: 14.0,
                                     color: Colors.grey)))
                       ],
                     ),

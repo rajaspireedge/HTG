@@ -13,10 +13,10 @@ class _Tab2State extends State<Tab2> with AutomaticKeepAliveClientMixin<Tab2> {
   List<Widget> listScreens;
 
   TextStyle style = TextStyle(
-      fontFamily: 'Poppins-Regular', fontSize: 10.0, color: Colors.white);
+      fontFamily: 'Poppins-Regular', fontSize: 14.0, color: Colors.white);
 
   TextStyle styleorange =
-      TextStyle(fontFamily: 'Poppins-Regular', fontSize: 10.0);
+      TextStyle(fontFamily: 'Poppins-Regular', fontSize: 14.0);
 
   @override
   void initState() {

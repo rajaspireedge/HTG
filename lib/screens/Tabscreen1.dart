@@ -33,7 +33,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: Text('Tab1'),
+        title: Text('Home'),
       ),
       // ignore: missing_return
       body: ListView.builder(
@@ -52,9 +52,9 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20.0),
                       ),
-                      margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+                      margin: EdgeInsets.fromLTRB(10.0, 20.0, 20.0, 10.0),
                       child: Container(
-                        height: 180,
+                        height: 150,
                         child: Column(
                           children: <Widget>[
                             Container(
@@ -62,13 +62,13 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                               height: 60,
                               child: Container(
                                 margin:
-                                    EdgeInsets.fromLTRB(40.0, 20.0, 0.0, 0.0),
+                                EdgeInsets.fromLTRB(40.0, 20.0, 0.0, 0.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
                                     Text("Housey",
                                         style: new TextStyle(
-                                            fontSize: 10.0,
+                                            fontSize: 14.0,
                                             color: Colors.black,
                                             fontFamily: 'Poppins-Light')),
                                     Text("John Doe",
@@ -93,17 +93,17 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                 Container(
                                   child: Text("200\nwinners",
                                       style: new TextStyle(
-                                          fontSize: 8.0,
+                                          fontSize: 14.0,
                                           color: Colors.black,
                                           fontFamily: 'Poppins-Light')),
                                   alignment: Alignment.center,
                                   margin:
-                                      EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                                  EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                                 ),
                                 Container(
                                   child: Text("3 Crores",
                                       style: new TextStyle(
-                                          fontSize: 12.0,
+                                          fontSize: 14.0,
                                           color: Colors.orange,
                                           fontFamily: 'Poppins')),
                                   alignment: Alignment.center,
@@ -111,12 +111,12 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                 Container(
                                   child: Text("4 Rs",
                                       style: new TextStyle(
-                                          fontSize: 10.0,
+                                          fontSize: 14.0,
                                           color: Colors.black,
                                           fontFamily: 'Poppins')),
                                   alignment: Alignment.center,
                                   margin:
-                                      EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                                  EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
                                 ),
                               ],
                             )
@@ -133,7 +133,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                     alignment: Alignment.center,
                     child: Text("1h : 20m : 5s",
                         style: new TextStyle(
-                            fontSize: 10.0,
+                            fontSize: 14.0,
                             color: Colors.white,
                             fontFamily: 'Poppins-ExtraBold')),
                     decoration: BoxDecoration(
