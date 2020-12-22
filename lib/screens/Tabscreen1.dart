@@ -1,7 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:htg/Mycontestdetail.dart';
+import 'package:htg/RestDatasource.dart';
+import 'package:http/http.dart' as http;
+import 'package:loading/indicator/ball_pulse_indicator.dart';
+import 'package:loading/loading.dart';
+
 
 class Tab1 extends StatefulWidget {
   @override
@@ -9,10 +16,36 @@ class Tab1 extends StatefulWidget {
 }
 
 class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
+
+
+  List<dynamic> snapgetcontest;
+
+
+
+  Future<String> getContest() async {
+    var res = await http.get(Uri.encodeFull(RestDatasource.Contest),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        });
+
+
+    var resBody = json.decode(res.body);
+    print(res.body);
+
+    setState(() {
+      snapgetcontest = resBody["Data"]["Manual"];
+    });
+
+    return "Success";
+  }
+
+
   @override
   void initState() {
     super.initState();
     print('initState Tab1');
+    this.getContest();
   }
 
   @override
@@ -30,6 +63,20 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
       right: BorderSide(width: 1.0, color: Colors.grey),
       bottom: BorderSide(width: 1.0, color: Colors.grey),
     );
+
+    if(snapgetcontest == null){
+      return Container(
+        color: Color(0xFF0a0f32),
+        child: Center(
+          child: Loading(
+            indicator: BallPulseIndicator(),
+            size: 100.0,
+            color: Colors.orange,
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
@@ -37,8 +84,9 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
       ),
       // ignore: missing_return
       body: ListView.builder(
-          itemCount: 4,
+          itemCount: snapgetcontest.length,
           itemBuilder: (context, index) {
+
             return GestureDetector(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
@@ -66,7 +114,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text("Housey",
+                                    Text(snapgetcontest[index]["ContestName"],
                                         style: new TextStyle(
                                             fontSize: 14.0,
                                             color: Colors.black,
@@ -109,7 +157,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                   alignment: Alignment.center,
                                 ),
                                 Container(
-                                  child: Text("4 Rs",
+                                  child: Text(snapgetcontest[index]["TicketPrice"].toString()+" Rs",
                                       style: new TextStyle(
                                           fontSize: 14.0,
                                           color: Colors.black,
