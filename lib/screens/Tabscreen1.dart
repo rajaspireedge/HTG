@@ -66,7 +66,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
 
     if(snapgetcontest == null){
       return Container(
-        color: Color(0xFF0a0f32),
+        color: Colors.white,
         child: Center(
           child: Loading(
             indicator: BallPulseIndicator(),

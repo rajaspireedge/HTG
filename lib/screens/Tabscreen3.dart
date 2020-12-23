@@ -34,8 +34,8 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   new Container(
-                    width: 180.0,
-                    height: 100.0,
+                    width: 180,
+                    height: 100,
                     decoration: new BoxDecoration(
                       color: Colors.orange,
                       borderRadius: new BorderRadius.circular(2.0),
@@ -50,7 +50,7 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                       ),
                     ),
                   ),
-                  Container(
+                /*  Container(
                     child: Container(
                       width: 30,
                       height: 30,
@@ -60,12 +60,19 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                     ),
                     width: 60,
                     height: 60,
-                    transform: Matrix4.translationValues(-30.0, 0.0, 0.0),
                     margin: const EdgeInsets.only(top: 10, bottom: 10),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle, color: Colors.white),
-                  ),
+                  ),*/
                 ],
+              ),
+              Container(
+                margin: EdgeInsets.only(top: 20 , bottom: 20),
+                child: Text("or",
+                    style: new TextStyle(
+                        fontSize: 20.0,
+                        color: Colors.black,
+                        fontFamily: 'Poppins-Light')),
               ),
               new Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -74,7 +81,6 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                   new Container(
                     width: 180.0,
                     height: 100.0,
-                    margin: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
                     decoration: new BoxDecoration(
                       color: Colors.white,
                       borderRadius: new BorderRadius.circular(2.0),
@@ -89,7 +95,7 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                       ),
                     ),
                   ),
-                  Container(
+                 /* Container(
                     child: Container(
                       width: 30,
                       height: 30,
@@ -99,11 +105,10 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                     ),
                     width: 60,
                     height: 60,
-                    transform: Matrix4.translationValues(-30.0, 0.0, 0.0),
                     margin: const EdgeInsets.only(top: 10, bottom: 10),
                     decoration: BoxDecoration(
                         shape: BoxShape.circle, color: Colors.orange),
-                  ),
+                  ),*/
                 ],
               ),
             ],
