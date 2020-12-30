@@ -33,24 +33,29 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  new Container(
-                    width: 180,
-                    height: 100,
-                    decoration: new BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: new BorderRadius.circular(2.0),
-                    ),
-                    child: new Center(
-                      child: new Text(
-                        'Create Game',
-                        style: new TextStyle(
-                            fontSize: 12.0,
-                            color: Colors.white,
-                            fontFamily: 'Poppins'),
+                  GestureDetector(
+                    onTap: () {
+                      
+                    },
+                    child: new Container(
+                      width: 180,
+                      height: 100,
+                      decoration: new BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: new BorderRadius.circular(2.0),
+                      ),
+                      child: new Center(
+                        child: new Text(
+                          'Create Game',
+                          style: new TextStyle(
+                              fontSize: 12.0,
+                              color: Colors.white,
+                              fontFamily: 'Poppins'),
+                        ),
                       ),
                     ),
                   ),
-                /*  Container(
+                  /*  Container(
                     child: Container(
                       width: 30,
                       height: 30,
@@ -67,7 +72,7 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                 ],
               ),
               Container(
-                margin: EdgeInsets.only(top: 20 , bottom: 20),
+                margin: EdgeInsets.only(top: 20, bottom: 20),
                 child: Text("or",
                     style: new TextStyle(
                         fontSize: 20.0,
@@ -95,7 +100,7 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                       ),
                     ),
                   ),
-                 /* Container(
+                  /* Container(
                     child: Container(
                       width: 30,
                       height: 30,
