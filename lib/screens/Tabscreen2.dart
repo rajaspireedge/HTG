@@ -24,6 +24,8 @@ class _Tab2State extends State<Tab2> with AutomaticKeepAliveClientMixin<Tab2> {
     listScreens = [Recent(), Upcoming(), Completed()];
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     print('build Tab2');
@@ -34,9 +36,9 @@ class _Tab2State extends State<Tab2> with AutomaticKeepAliveClientMixin<Tab2> {
           child: Scaffold(
             appBar: AppBar(
               title: Text(
-                "My Contest",
-                style: style,
-                textAlign: TextAlign.center,
+                'My Contest',
+                style: TextStyle(
+                    fontSize: 15.0, color: Colors.white, fontFamily: 'Poppins'),
               ),
               backgroundColor: Colors.orange,
               bottom: TabBar(

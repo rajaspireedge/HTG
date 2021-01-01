@@ -18,7 +18,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final username_controller = TextEditingController();
-
     final password_controller = TextEditingController();
 
     final signintext = Text("Sign In",

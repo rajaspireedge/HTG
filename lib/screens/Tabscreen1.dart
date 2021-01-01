@@ -80,7 +80,11 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: Text('Home'),
+        title: Text(
+          'Home',
+          style: TextStyle(
+              fontSize: 15.0, color: Colors.white, fontFamily: 'Poppins'),
+        ),
       ),
       // ignore: missing_return
       body: ListView.builder(

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:htg/creategame.dart';
 
 class Tab3 extends StatefulWidget {
   @override
@@ -34,9 +35,9 @@ class _Tab3State extends State<Tab3> with AutomaticKeepAliveClientMixin<Tab3> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   GestureDetector(
-                    onTap: () {
-                      
-                    },
+                    onTap: () => Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                            builder: (BuildContext context) => Creategame())),
                     child: new Container(
                       width: 180,
                       height: 100,

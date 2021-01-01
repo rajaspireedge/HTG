@@ -18,7 +18,11 @@ class _Tab4State extends State<Tab4> with AutomaticKeepAliveClientMixin<Tab4> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        title: Text('Tab4'),
+        title: Text(
+          'Settings',
+          style: TextStyle(
+              fontSize: 15.0, color: Colors.white, fontFamily: 'Poppins'),
+        ),
       ),
       body: Center(
         child: Text(

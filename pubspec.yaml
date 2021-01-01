@@ -59,7 +59,7 @@ flutter:
 
 
   assets:
-    - assets/splash.gif
+    - assets/images/
 
   fonts:
     - family: Poppins
