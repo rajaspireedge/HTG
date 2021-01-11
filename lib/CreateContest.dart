@@ -12,9 +12,9 @@ class CreateContest extends StatefulWidget {
 
 class _CreateContestState extends State<CreateContest> {
   TextStyle style = TextStyle(
-      fontFamily: 'Poppins-Regular', fontSize: 10.0, color: Colors.orange);
+      fontFamily: 'Muli-Regular', fontSize: 10.0, color: Color(0xFFEE802E));
   TextStyle hintstyle = TextStyle(
-      fontFamily: 'Poppins-Regular', fontSize: 10.0, color: Colors.grey);
+      fontFamily: 'Muli-Regular', fontSize: 10.0, color: Colors.grey);
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +26,9 @@ class _CreateContestState extends State<CreateContest> {
     final signuptext = new InkWell(
       child: Text("Sign Up",
           style: TextStyle(
-              fontFamily: 'Poppins',
+              fontFamily: 'Muli',
               fontSize: 20.0,
-              color: Colors.orange,
+              color: Color(0xFFEE802E),
               fontWeight: FontWeight.bold)),
     );
 
@@ -42,7 +42,7 @@ class _CreateContestState extends State<CreateContest> {
         hintStyle: hintstyle,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(color: Colors.orange),
+          borderSide: BorderSide(color: Color(0xFFEE802E)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -61,7 +61,7 @@ class _CreateContestState extends State<CreateContest> {
         hintStyle: hintstyle,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(color: Colors.orange),
+          borderSide: BorderSide(color: Color(0xFFEE802E)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -74,7 +74,7 @@ class _CreateContestState extends State<CreateContest> {
 
     final Havearefferealcodetext = Text("Have a Reffral Code?",
         style: TextStyle(
-            fontFamily: 'Poppins', fontSize: 10.0, color: Colors.orange));
+            fontFamily: 'Muli', fontSize: 10.0, color: Color(0xFFEE802E)));
 
     final mobilenumbertext = TextField(
       controller: mobilenumbertext_controller,
@@ -89,7 +89,7 @@ class _CreateContestState extends State<CreateContest> {
         hintStyle: hintstyle,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
-          borderSide: BorderSide(color: Colors.orange),
+          borderSide: BorderSide(color: Color(0xFFEE802E)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -100,7 +100,7 @@ class _CreateContestState extends State<CreateContest> {
 
     final alreadyhaveacount = Text("Already have an account?",
         style: TextStyle(
-            fontFamily: 'Poppins',
+            fontFamily: 'Muli',
             fontSize: 10.0,
             color: Colors.grey,
             fontWeight: FontWeight.bold));
@@ -110,9 +110,9 @@ class _CreateContestState extends State<CreateContest> {
             MaterialPageRoute(builder: (BuildContext context) => HomeScreen())),
         child: Text("Sign In",
             style: TextStyle(
-                fontFamily: 'Poppins',
+                fontFamily: 'Muli',
                 fontSize: 10.0,
-                color: Colors.orange,
+                color: Color(0xFFEE802E),
                 fontWeight: FontWeight.bold)));
 
     final passwordFields = TextField(
@@ -125,7 +125,7 @@ class _CreateContestState extends State<CreateContest> {
           hintStyle: hintstyle,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
-            borderSide: BorderSide(color: Colors.orange),
+            borderSide: BorderSide(color: Color(0xFFEE802E)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
@@ -173,7 +173,7 @@ class _CreateContestState extends State<CreateContest> {
                       ),
                       margin: const EdgeInsets.only(top: 10, bottom: 10),
                       decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Colors.orange),
+                          shape: BoxShape.circle, color: Color(0xFFEE802E)),
                     ),
                     SizedBox(height: 10.0),
                     Container(

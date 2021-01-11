@@ -33,14 +33,14 @@ Widget _myListView(BuildContext context) {
                     style: new TextStyle(
                         fontSize: 10.0,
                         color: Colors.black,
-                        fontFamily: 'Poppins'))),
+                        fontFamily: 'Muli'))),
             Container(
                 padding: EdgeInsets.all(5.0),
                 child: Text("50",
                     style: new TextStyle(
                         fontSize: 10.0,
-                        color: Colors.orange,
-                        fontFamily: 'Poppins'))),
+                        color: Color(0xFFEE802E),
+                        fontFamily: 'Muli'))),
             Container(
                 padding: EdgeInsets.all(5.0),
                 decoration: BoxDecoration(
@@ -51,7 +51,7 @@ Widget _myListView(BuildContext context) {
                     style: new TextStyle(
                         fontSize: 10.0,
                         color: Colors.white,
-                        fontFamily: 'Poppins')))
+                        fontFamily: 'Muli')))
           ],
         ),
       );
@@ -60,14 +60,14 @@ Widget _myListView(BuildContext context) {
 }
 
 TextStyle styleorange =
-    TextStyle(fontFamily: 'Poppins-Regular', fontSize: 10.0);
+    TextStyle(fontFamily: 'Muli-Regular', fontSize: 10.0);
 
 class _MycontestdetailState extends State<Mycontestdetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: new AppBar(
-        backgroundColor: Colors.orange,
+        backgroundColor: Color(0xFFEE802E),
         title: new Text("Contest Detail"),
         leading: new Padding(
           padding: const EdgeInsets.all(10.0),
@@ -107,12 +107,12 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                         style: new TextStyle(
                                             fontSize: 10.0,
                                             color: Colors.black,
-                                            fontFamily: 'Poppins-Light')),
+                                            fontFamily: 'Muli-Light')),
                                     Text("John Doe",
                                         style: new TextStyle(
                                             fontSize: 8.0,
                                             color: Colors.grey,
-                                            fontFamily: 'Poppins'))
+                                            fontFamily: 'Muli'))
                                   ],
                                 ),
                               ),
@@ -133,7 +133,7 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                       style: new TextStyle(
                                           fontSize: 8.0,
                                           color: Colors.black,
-                                          fontFamily: 'Poppins-Light')),
+                                          fontFamily: 'Muli-Light')),
                                   alignment: Alignment.center,
                                   margin:
                                       EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
@@ -142,8 +142,8 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                   child: Text("3 Crores",
                                       style: new TextStyle(
                                           fontSize: 12.0,
-                                          color: Colors.orange,
-                                          fontFamily: 'Poppins')),
+                                          color: Color(0xFFEE802E),
+                                          fontFamily: 'Muli')),
                                   alignment: Alignment.center,
                                 ),
                                 Container(
@@ -151,7 +151,7 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                       style: new TextStyle(
                                           fontSize: 10.0,
                                           color: Colors.black,
-                                          fontFamily: 'Poppins')),
+                                          fontFamily: 'Muli')),
                                   alignment: Alignment.center,
                                   margin:
                                       EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
@@ -171,7 +171,7 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                 child: Container(
                               margin: EdgeInsets.all(12.0),
                               decoration: BoxDecoration(
-                                  color: Colors.orange,
+                                  color: Color(0xFFEE802E),
                                   borderRadius: new BorderRadius.circular(40)),
                               child: Row(
                                 mainAxisAlignment:
@@ -185,14 +185,14 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                           style: new TextStyle(
                                               fontSize: 10.0,
                                               color: Colors.black,
-                                              fontFamily: 'Poppins'))),
+                                              fontFamily: 'Muli'))),
                                   Container(
                                       padding: EdgeInsets.all(5.0),
                                       child: Text("Winners",
                                           style: new TextStyle(
                                               fontSize: 10.0,
                                               color: Colors.black,
-                                              fontFamily: 'Poppins'))),
+                                              fontFamily: 'Muli'))),
                                   Container(
                                       padding: EdgeInsets.all(5.0),
                                       margin: EdgeInsets.fromLTRB(
@@ -201,7 +201,7 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                           style: new TextStyle(
                                               fontSize: 10.0,
                                               color: Colors.black,
-                                              fontFamily: 'Poppins')))
+                                              fontFamily: 'Muli')))
                                 ],
                               ),
                             )),
@@ -215,7 +215,7 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                   child: Container(
                                     margin: EdgeInsets.all(20.0),
                                     decoration: BoxDecoration(
-                                        color: Colors.orange,
+                                        color: Color(0xFFEE802E),
                                         borderRadius:
                                             new BorderRadius.circular(40)),
                                     child: Row(
@@ -230,7 +230,7 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                                 style: new TextStyle(
                                                     fontSize: 10.0,
                                                     color: Colors.white,
-                                                    fontFamily: 'Poppins'))),
+                                                    fontFamily: 'Muli'))),
                                       ],
                                     ),
                                   )),
@@ -250,9 +250,9 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                         style: new TextStyle(
                             fontSize: 10.0,
                             color: Colors.white,
-                            fontFamily: 'Poppins-ExtraBold')),
+                            fontFamily: 'Muli-ExtraBold')),
                     decoration: BoxDecoration(
-                        color: Colors.orange,
+                        color: Color(0xFFEE802E),
                         borderRadius: new BorderRadius.circular(4.0)),
                   ),
                 ],

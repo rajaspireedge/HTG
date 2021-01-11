@@ -10,9 +10,9 @@ class CreateAndJoin extends StatefulWidget {
 }
 
 class _CreateAndJoinState extends State<CreateAndJoin> {
-
   int tabIndex = 0;
   List<Widget> listScreens;
+
   @override
   void initState() {
     super.initState();
@@ -27,13 +27,18 @@ class _CreateAndJoinState extends State<CreateAndJoin> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      color: Colors.orange,
+      color: Color(0xFFEE802E),
       home: Scaffold(
         body: listScreens[tabIndex],
         bottomNavigationBar: BottomNavigationBar(
-            selectedItemColor: Colors.orange,
+            selectedItemColor: Color(0xFFEE802E),
+            type: BottomNavigationBarType.fixed,
             unselectedItemColor: Colors.black,
             backgroundColor: Colors.white,
+            selectedFontSize: 14,
+            showUnselectedLabels: true,
+            showSelectedLabels: true,
+            unselectedFontSize: 14,
             currentIndex: tabIndex,
             onTap: (int index) {
               setState(() {
@@ -42,22 +47,35 @@ class _CreateAndJoinState extends State<CreateAndJoin> {
             },
             items: [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                title: Text('Home'),
-              ),
+                  icon: ImageIcon(
+                    AssetImage("assets/images/home.png"),
+                  ),
+                  title: Text("HOME",
+                      style:
+                          new TextStyle(fontSize: 10.0, fontFamily: 'Muli'))),
               BottomNavigationBarItem(
-                icon: Icon(Icons.report_problem),
-                title: Text('My Contest'),
-              ),
+                  icon: ImageIcon(
+                    AssetImage("assets/images/mycontest-01.png"),
+                  ),
+                  title: Text("MY CONTEST",
+                      style: new TextStyle(
+                          fontSize: 10.0, fontFamily: 'Muli'))),
               BottomNavigationBarItem(
-                icon: Icon(Icons.settings),
-                title: Text('Create/join'),
-              ),  BottomNavigationBarItem(
-                icon: Icon(Icons.reorder),
-                title: Text('More'),
-              ),
+                  icon: ImageIcon(
+                    AssetImage("assets/images/createcontest-01.png"),
+                  ),
+                  title: Text("CREATE CONTEST",
+                      style: new TextStyle(
+                          fontSize: 10.0, fontFamily: 'Muli'))),
+              BottomNavigationBarItem(
+                  icon: ImageIcon(
+                    AssetImage("assets/images/more.png"),
+                  ),
+                  title: Text("MORE",
+                      style: new TextStyle(
+                          fontSize: 10.0, fontFamily: 'Muli'))),
             ]),
-        backgroundColor: Colors.orange,
+        backgroundColor: Color(0xFFEE802E),
       ),
     );
   }

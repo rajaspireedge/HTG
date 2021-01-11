@@ -17,13 +17,28 @@ class _Tab4State extends State<Tab4> with AutomaticKeepAliveClientMixin<Tab4> {
     print('build Tab4');
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
-        title: Text(
-          'Settings',
-          style: TextStyle(
-              fontSize: 15.0, color: Colors.white, fontFamily: 'Poppins'),
-        ),
-      ),
+          backgroundColor: Color(0xFFEE802E),
+          title: Stack(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    margin: EdgeInsets.only(top: 100),
+                    child: Image.asset(
+                      'assets/images/BLRLOGO.png',
+                      height: 200,
+                    ),
+                  )
+                ],
+              ),
+              Text(
+                'Settings',
+                style: TextStyle(
+                    fontSize: 15.0, color: Colors.white, fontFamily: 'Muli'),
+              ),
+            ],
+          )),
       body: Center(
         child: Text(
           'This is content of Tab4',

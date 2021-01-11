@@ -9,26 +9,19 @@ import 'package:http/http.dart' as http;
 import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'package:loading/loading.dart';
 
-
 class Tab1 extends StatefulWidget {
   @override
   _Tab1State createState() => _Tab1State();
 }
 
 class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
-
-
   List<dynamic> snapgetcontest;
 
-
-
   Future<String> getContest() async {
-    var res = await http.get(Uri.encodeFull(RestDatasource.Contest),
-        headers: {
-          "Accept": "application/json",
-          "content-type": "application/json"
-        });
-
+    var res = await http.get(Uri.encodeFull(RestDatasource.Contest), headers: {
+      "Accept": "application/json",
+      "content-type": "application/json"
+    });
 
     var resBody = json.decode(res.body);
     print(res.body);
@@ -39,7 +32,6 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
 
     return "Success";
   }
-
 
   @override
   void initState() {
@@ -64,14 +56,14 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
       bottom: BorderSide(width: 1.0, color: Colors.grey),
     );
 
-    if(snapgetcontest == null){
+    if (snapgetcontest == null) {
       return Container(
         color: Colors.white,
         child: Center(
           child: Loading(
             indicator: BallPulseIndicator(),
             size: 100.0,
-            color: Colors.orange,
+            color: Color(0xFFEE802E),
           ),
         ),
       );
@@ -79,18 +71,23 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.orange,
-        title: Text(
-          'Home',
-          style: TextStyle(
-              fontSize: 15.0, color: Colors.white, fontFamily: 'Poppins'),
-        ),
-      ),
+          backgroundColor: Color(0xFFEE802E),
+          title: Stack(
+            children: [
+              Container(
+                alignment: Alignment.bottomCenter,
+                margin: EdgeInsets.only(top: 100),
+                child: Image.asset(
+                  'assets/images/BLRLOGO.png',
+                  height: 200,
+                ),
+              )
+            ],
+          )),
       // ignore: missing_return
       body: ListView.builder(
           itemCount: snapgetcontest.length,
           itemBuilder: (context, index) {
-
             return GestureDetector(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
@@ -114,7 +111,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                               height: 60,
                               child: Container(
                                 margin:
-                                EdgeInsets.fromLTRB(40.0, 20.0, 0.0, 0.0),
+                                    EdgeInsets.fromLTRB(40.0, 20.0, 0.0, 0.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -122,12 +119,12 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                         style: new TextStyle(
                                             fontSize: 14.0,
                                             color: Colors.black,
-                                            fontFamily: 'Poppins-Light')),
+                                            fontFamily: 'Muli-Light')),
                                     Text("John Doe",
                                         style: new TextStyle(
                                             fontSize: 8.0,
                                             color: Colors.grey,
-                                            fontFamily: 'Poppins'))
+                                            fontFamily: 'Muli'))
                                   ],
                                 ),
                               ),
@@ -147,28 +144,31 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                       style: new TextStyle(
                                           fontSize: 14.0,
                                           color: Colors.black,
-                                          fontFamily: 'Poppins-Light')),
+                                          fontFamily: 'Muli-Light')),
                                   alignment: Alignment.center,
                                   margin:
-                                  EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                                      EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                                 ),
                                 Container(
                                   child: Text("3 Crores",
                                       style: new TextStyle(
                                           fontSize: 14.0,
-                                          color: Colors.orange,
-                                          fontFamily: 'Poppins')),
+                                          color: Color(0xFFEE802E),
+                                          fontFamily: 'Muli')),
                                   alignment: Alignment.center,
                                 ),
                                 Container(
-                                  child: Text(snapgetcontest[index]["TicketPrice"].toString()+" Rs",
+                                  child: Text(
+                                      snapgetcontest[index]["TicketPrice"]
+                                              .toString() +
+                                          " Rs",
                                       style: new TextStyle(
                                           fontSize: 14.0,
                                           color: Colors.black,
-                                          fontFamily: 'Poppins')),
+                                          fontFamily: 'Muli')),
                                   alignment: Alignment.center,
                                   margin:
-                                  EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
+                                      EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
                                 ),
                               ],
                             )
@@ -187,9 +187,9 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                         style: new TextStyle(
                             fontSize: 14.0,
                             color: Colors.white,
-                            fontFamily: 'Poppins-ExtraBold')),
+                            fontFamily: 'Muli-ExtraBold')),
                     decoration: BoxDecoration(
-                        color: Colors.orange,
+                        color: Color(0xFFEE802E),
                         borderRadius: new BorderRadius.circular(4.0)),
                   ),
                 ],

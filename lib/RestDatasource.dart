@@ -14,6 +14,7 @@ class RestDatasource {
   static final Signup = BASE_URL + "/v1/user/register";
   static final SIGNUPURL = BASE_URL + "/v1/user/signin";
   static final Contest = BASE_URL + "/v1/contest";
+  static final rule = BASE_URL + "/v1/rule";
 
   addStringToSF(dynamic data) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

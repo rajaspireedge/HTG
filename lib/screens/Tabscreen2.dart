@@ -13,10 +13,9 @@ class _Tab2State extends State<Tab2> with AutomaticKeepAliveClientMixin<Tab2> {
   List<Widget> listScreens;
 
   TextStyle style = TextStyle(
-      fontFamily: 'Poppins-Regular', fontSize: 14.0, color: Colors.white);
+      fontFamily: 'Muli-Regular', fontSize: 14.0, color: Colors.white);
 
-  TextStyle styleorange =
-      TextStyle(fontFamily: 'Poppins-Regular', fontSize: 14.0);
+  TextStyle styleorange = TextStyle(fontFamily: 'Muli-Regular', fontSize: 14.0);
 
   @override
   void initState() {
@@ -24,27 +23,43 @@ class _Tab2State extends State<Tab2> with AutomaticKeepAliveClientMixin<Tab2> {
     listScreens = [Recent(), Upcoming(), Completed()];
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     print('build Tab2');
     return MaterialApp(
-      color: Colors.orange,
+      color: Color(0xFFEE802E),
       home: DefaultTabController(
           length: 3,
           child: Scaffold(
             appBar: AppBar(
-              title: Text(
-                'My Contest',
-                style: TextStyle(
-                    fontSize: 15.0, color: Colors.white, fontFamily: 'Poppins'),
+              title: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    margin: EdgeInsets.only(top: 100),
+                    child: Image.asset(
+                      'assets/images/BLRLOGO.png',
+                      height: 200,
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'My Contest',
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          color: Colors.white,
+                          fontFamily: 'Muli'),
+                    ),
+                  ),
+                ],
               ),
-              backgroundColor: Colors.orange,
+              backgroundColor: Color(0xFFEE802E),
               bottom: TabBar(
-                  indicatorColor: Colors.orange,
+                  indicatorColor: Color(0xFFEE802E),
                   unselectedLabelColor: Colors.white,
-                  labelColor: Colors.orange,
+                  labelColor: Color(0xFFEE802E),
                   indicator: BoxDecoration(color: Colors.white),
                   tabs: [
                     Container(
@@ -52,7 +67,10 @@ class _Tab2State extends State<Tab2> with AutomaticKeepAliveClientMixin<Tab2> {
                       width: 100,
                       height: 40,
                       child: Center(
-                        child: Text("Recent", style: styleorange,),
+                        child: Text(
+                          "Recent",
+                          style: styleorange,
+                        ),
                       ),
                     ),
                     Container(
@@ -60,7 +78,10 @@ class _Tab2State extends State<Tab2> with AutomaticKeepAliveClientMixin<Tab2> {
                       width: 100,
                       height: 40,
                       child: Center(
-                        child: Text("Upcoming",style: styleorange,),
+                        child: Text(
+                          "Upcoming",
+                          style: styleorange,
+                        ),
                       ),
                     ),
                     Container(
@@ -68,7 +89,10 @@ class _Tab2State extends State<Tab2> with AutomaticKeepAliveClientMixin<Tab2> {
                       width: 100,
                       height: 40,
                       child: Center(
-                        child: Text("Completed",style: styleorange,),
+                        child: Text(
+                          "Completed",
+                          style: styleorange,
+                        ),
                       ),
                     ),
                   ]),

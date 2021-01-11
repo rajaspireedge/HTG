@@ -50,12 +50,12 @@ class _UpcomingState extends State<Upcoming> {
                                           style: new TextStyle(
                                               fontSize: 14.0,
                                               color: Colors.black,
-                                              fontFamily: 'Poppins-Light')),
+                                              fontFamily: 'Muli-Light')),
                                       Text("John Doe",
                                           style: new TextStyle(
                                               fontSize: 8.0,
                                               color: Colors.grey,
-                                              fontFamily: 'Poppins'))
+                                              fontFamily: 'Muli'))
                                     ],
                                   ),
                                 ),
@@ -75,7 +75,7 @@ class _UpcomingState extends State<Upcoming> {
                                         style: new TextStyle(
                                             fontSize: 14.0,
                                             color: Colors.black,
-                                            fontFamily: 'Poppins-Light')),
+                                            fontFamily: 'Muli-Light')),
                                     alignment: Alignment.center,
                                     margin:
                                     EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
@@ -84,8 +84,8 @@ class _UpcomingState extends State<Upcoming> {
                                     child: Text("3 Crores",
                                         style: new TextStyle(
                                             fontSize: 14.0,
-                                            color: Colors.orange,
-                                            fontFamily: 'Poppins')),
+                                            color: Color(0xFFEE802E),
+                                            fontFamily: 'Muli')),
                                     alignment: Alignment.center,
                                   ),
                                   Container(
@@ -93,7 +93,7 @@ class _UpcomingState extends State<Upcoming> {
                                         style: new TextStyle(
                                             fontSize: 14.0,
                                             color: Colors.black,
-                                            fontFamily: 'Poppins')),
+                                            fontFamily: 'Muli')),
                                     alignment: Alignment.center,
                                     margin:
                                     EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
@@ -115,9 +115,9 @@ class _UpcomingState extends State<Upcoming> {
                           style: new TextStyle(
                               fontSize: 14.0,
                               color: Colors.white,
-                              fontFamily: 'Poppins-ExtraBold')),
+                              fontFamily: 'Muli-ExtraBold')),
                       decoration: BoxDecoration(
-                          color: Colors.orange,
+                          color: Color(0xFFEE802E),
                           borderRadius: new BorderRadius.circular(4.0)),
                     ),
                   ],

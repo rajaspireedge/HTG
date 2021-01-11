@@ -32,16 +32,16 @@ Widget _myListView(BuildContext context) {
                 margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                 child: Text("First Rule",
                     style: new TextStyle(
-                        fontSize: 10.0,
+                        fontSize: 14.0,
                         color: Colors.black,
-                        fontFamily: 'Poppins'))),
+                        fontFamily: 'Muli'))),
             Container(
                 padding: EdgeInsets.all(5.0),
                 child: Text("50",
                     style: new TextStyle(
-                        fontSize: 10.0,
-                        color: Colors.orange,
-                        fontFamily: 'Poppins'))),
+                        fontSize: 14.0,
+                        color: Color(0xFFEE802E),
+                        fontFamily: 'Muli'))),
             Container(
                 padding: EdgeInsets.all(5.0),
                 decoration: BoxDecoration(
@@ -50,9 +50,9 @@ Widget _myListView(BuildContext context) {
                 margin: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
                 child: Text("1500",
                     style: new TextStyle(
-                        fontSize: 10.0,
+                        fontSize: 14.0,
                         color: Colors.white,
-                        fontFamily: 'Poppins')))
+                        fontFamily: 'Muli')))
           ],
         ),
       );
@@ -79,18 +79,23 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> myRowChildren = [];
     List<List<int>> numbers = [];
     List<int> columnNumbers = [];
-    int z = 0;
-    for (int i = 0; i <= 10; i++) {
+    int currentNumber = 0;
+    int z = 1;
+    for (int i = 0; i <= 8; i++) {
       int maxColNr = 2;
       for (int y = 0; y <= maxColNr; y++) {
-        int currentNumber = z + y; // 0,1,2,3,4,5,6,7,8,9,10, 10,11, 12, 13,14
-        columnNumbers.add(currentNumber);
+        Random random = new Random();
+        int randomNumber = random.nextInt(100); // from
+        currentNumber = randomNumber;
+        if(columnNumbers.contains(currentNumber)){
+          print(currentNumber);
+        } else{
+          columnNumbers.add(randomNumber);
+        }
       }
-      z += maxColNr;
       numbers.add(columnNumbers);
       columnNumbers = [];
     }
-    print(numbers);
 
     myRowChildren = numbers
         .map(
@@ -124,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: myRowChildren,
                       decoration: BoxDecoration(
                         border: Border.all(
-                          color: Colors.orange,
+                          color: Color(0xFFEE802E),
                         ),
                         borderRadius: BorderRadius.circular(10.0),
                       ),
@@ -136,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Container(
                 margin: EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
-                    color: Colors.orange,
+                    color: Color(0xFFEE802E),
                     borderRadius: new BorderRadius.circular(40)),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,24 +151,24 @@ class _MyHomePageState extends State<MyHomePage> {
                         margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
                         child: Text("Rule Type",
                             style: new TextStyle(
-                                fontSize: 10.0,
+                                fontSize: 14.0,
                                 color: Colors.black,
-                                fontFamily: 'Poppins'))),
+                                fontFamily: 'Muli'))),
                     Container(
                         padding: EdgeInsets.all(5.0),
                         child: Text("Winners",
                             style: new TextStyle(
-                                fontSize: 10.0,
+                                fontSize: 14.0,
                                 color: Colors.black,
-                                fontFamily: 'Poppins'))),
+                                fontFamily: 'Muli'))),
                     Container(
                         padding: EdgeInsets.all(5.0),
                         margin: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
                         child: Text("Winners Prize",
                             style: new TextStyle(
-                                fontSize: 10.0,
+                                fontSize: 14.0,
                                 color: Colors.black,
-                                fontFamily: 'Poppins')))
+                                fontFamily: 'Muli')))
                   ],
                 ),
               )),
