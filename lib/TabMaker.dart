@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:htg/screens/Tabscreen1.dart';
-import 'package:htg/screens/Tabscreen4.dart';
-import 'screens/Tabscreen2.dart';
-import 'screens/Tabscreen3.dart';
+import 'package:htg/screens/Home.dart';
+import 'package:htg/screens/More.dart';
+import 'screens/MyContest.dart';
+import 'screens/CreateandJoinGame.dart';
 
 class CreateAndJoin extends StatefulWidget {
   @override

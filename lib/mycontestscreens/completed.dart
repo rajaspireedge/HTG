@@ -23,7 +23,7 @@ class _CompletedState extends State<Completed> {
               return GestureDetector(
                 onTap: () => Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                        builder: (BuildContext context) => Mycontestdetail())),
+                        builder: (BuildContext context) => Mycontestdetail(""))),
                 child: Stack(
                   alignment: Alignment.topCenter,
                   overflow: Overflow.visible,

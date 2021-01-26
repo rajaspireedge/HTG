@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:htg/CreateContest.dart';
+import 'package:htg/SignUp.dart';
 import 'package:htg/RestDatasource.dart';
-import 'package:htg/creatingandjoin.dart';
+import 'package:htg/TabMaker.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,10 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextStyle style = TextStyle(
-      fontFamily: 'Muli-Regular', fontSize: 14.0, color: Color(0xFFEE802E));
- TextStyle hintstyle = TextStyle(
-      fontFamily: 'Muli-Regular', fontSize: 14.0, color: Colors.grey);
+
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final signintext = Text("Sign In",
         style: TextStyle(
             fontFamily: 'Muli',
-            fontSize: 20.0,
+            fontSize: 25.0,
             color: Color(0xFFEE802E),
             fontWeight: FontWeight.bold));
     final ORloginintext = Text("OR Login via",
@@ -39,8 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
             fontFamily: 'Muli', fontSize: 14.0, color: Color(0xFFEE802E)));
 
     final forgotpasswordtext = Text("forgot password?",
-        style: TextStyle(
-            fontFamily: 'Muli', fontSize: 14.0, color: Colors.grey));
+        style:
+            TextStyle(fontFamily: 'Muli', fontSize: 14.0, color: Colors.grey));
 
     const border = Border(
       top: BorderSide(width: 1.0, color: Color(0xFFEE802E)),
@@ -49,17 +46,20 @@ class _HomeScreenState extends State<HomeScreen> {
       bottom: BorderSide(width: 1.0, color: Colors.brown),
     );
 
+    Map<String, dynamic> apimap = Map();
+
     final emailFields = TextField(
       controller: username_controller,
       obscureText: false,
-      style: style,
+      style: TextStyle(
+          fontFamily: 'Muli-Regular', fontSize: 16.0, color: Color(0xFFEE802E)),
       maxLength: 10,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: "Mobile",
         counter: Offstage(),
-        hintStyle: hintstyle,
+        hintStyle: TextStyle(fontFamily: 'Muli-Regular', fontSize: 16.0, color: Colors.grey),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
           borderSide: BorderSide(color: Color(0xFFEE802E)),
@@ -76,11 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
     final passwordFields = TextField(
       controller: password_controller,
       obscureText: true,
-      style: style,
+      style: TextStyle(
+          fontFamily: 'Muli-Regular', fontSize: 16.0, color: Color(0xFFEE802E)),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
-          hintStyle: hintstyle,
+          hintStyle: TextStyle(fontFamily: 'Muli-Regular', fontSize: 16.0, color: Colors.grey),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
             borderSide: BorderSide(color: Color(0xFFEE802E)),
@@ -95,13 +96,15 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+
+                  Container(child: Image(image: AssetImage('assets/images/LOGO.png')), height: 200,width: 200,),
+
                   signintext,
                   SizedBox(height: 10.0),
                   Container(child: emailFields),
@@ -109,21 +112,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   Container(child: passwordFields),
                   SizedBox(height: 10.0),
                   Container(child: forgotpasswordtext),
-                  Container(
-                    width: 60,
-                    height: 60,
-                    child: InkWell(
-                      onTap: () => api
-                          .login(username_controller.text,
-                              password_controller.text)
-                          .then((value) => Navigator.of(context)
-                              .pushReplacement(MaterialPageRoute(
-                                  builder: (BuildContext context) =>
-                                  CreateAndJoin()))),
+                  GestureDetector(
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      child: Image(image: AssetImage('assets/images/Next.png')),
+                      margin: const EdgeInsets.only(top: 10, bottom: 10),
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Color(0xFFEE802E)),
                     ),
-                    margin: const EdgeInsets.only(top: 10, bottom: 10),
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle, color: Color(0xFFEE802E)),
+                    onTap: () {
+                      apimap["Mobile"] = username_controller.text;
+                      apimap["Password"] = password_controller.text;
+                      api.loginapi(apimap, context);
+                    },
                   ),
                   ORloginintext,
                   Container(

@@ -1,14 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:custom_switch_button/custom_switch_button.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:htg/HomeScreen.dart';
 import 'package:htg/RestDatasource.dart';
-import 'package:htg/creatingandjoin.dart';
-import 'package:htg/screens/Tabscreen3.dart';
+import 'package:htg/TabMaker.dart';
+import 'package:htg/screens/CreateandJoinGame.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
@@ -21,9 +22,9 @@ class _CreategameState extends State<Creategame> {
   var entergamename = TextEditingController();
   var enterentryfeeamount = TextEditingController();
   var entercreatorname = TextEditingController();
-  var gametime = TextEditingController();
+  String gametime = "Game time";
   var gamename = TextEditingController();
-  var gamedate = TextEditingController();
+  String gamedate = "Game date";
   var gamedescription = TextEditingController();
   var totalplayers = TextEditingController();
   var totalamount = TextEditingController();
@@ -31,9 +32,11 @@ class _CreategameState extends State<Creategame> {
   var gamerules = TextEditingController();
   var winneramount = TextEditingController();
   var totalwinner = TextEditingController();
+  var addnewrules = TextEditingController();
   bool status = false;
   bool isChecked = false;
   bool isChecked2 = false;
+  RestDatasource api = new RestDatasource();
 
   var _mySelection;
   List snapgetrules = List();
@@ -42,19 +45,14 @@ class _CreategameState extends State<Creategame> {
 
   String uploadimageString;
 
-  var selectedDate;
-
   var DateFormat;
 
-  var selectedTime;
+  TimeOfDay selectedTime = TimeOfDay.now();
+  DateTime _selectDate;
+  Map<String, dynamic> map = Map();
+  Map<String, dynamic> apimap = Map();
 
-  String _hour;
-
-  String _minute;
-
-  String _time;
-
-  var hh;
+  TextStyle styleorange = TextStyle(fontFamily: 'Muli-Regular', fontSize: 14.0);
 
   Future<String> getRules() async {
     var res = await http.get(Uri.encodeFull(RestDatasource.rule), headers: {
@@ -63,10 +61,10 @@ class _CreategameState extends State<Creategame> {
     });
 
     var resBody = json.decode(res.body);
-    print(res.body);
 
     setState(() {
       snapgetrules = resBody["Data"];
+      print(snapgetrules);
     });
 
     return "Success";
@@ -81,32 +79,48 @@ class _CreategameState extends State<Creategame> {
     });
   }
 
-  Future<Null> _selectDate(BuildContext context) async {
-    final DateTime picked = await showDatePicker(
-        context: context,
-        initialDate: selectedDate,
-        initialDatePickerMode: DatePickerMode.day,
-        firstDate: DateTime(2015),
-        lastDate: DateTime(2101));
-    if (picked != null)
+  //Method for showing the date picker
+  void _pickDateDialog() {
+    showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            //which date will display when user open the picker
+            firstDate: DateTime(1950),
+            //what will be the previous supported year in picker
+            lastDate: DateTime
+                .now()) //what will be the up to supported date in picker
+        .then((pickedDate) {
+      //then usually do the future job
+      if (pickedDate == null) {
+        //if user tap cancel then this function will stop
+        return;
+      }
       setState(() {
-        selectedDate = picked;
-        gamedate.text = DateFormat.yMd().format(selectedDate);
+        //for rebuilding the ui
+        _selectDate = pickedDate;
+
+        gamedate = formatDate(
+            DateTime(_selectDate.year, _selectDate.month, _selectDate.day),
+            [dd, '/', mm, '/', yyyy]);
       });
+    });
   }
 
-  Future<Null> _selectTime(BuildContext context) async {
-    final TimeOfDay picked = await showTimePicker(
-      context: context,
-      initialTime: selectedTime,
-    );
-    if (picked != null)
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay picked_s = await showTimePicker(
+        context: context,
+        initialTime: selectedTime,
+        builder: (BuildContext context, Widget child) {
+          return MediaQuery(
+            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+            child: child,
+          );
+        });
+
+    if (picked_s != null && picked_s != selectedTime)
       setState(() {
-        selectedTime = picked;
-        _hour = selectedTime.hour.toString();
-        _minute = selectedTime.minute.toString();
-        _time = _hour + ' : ' + _minute;
-        gametime.text = _time;
+        selectedTime = picked_s;
+        gametime = selectedTime.format(context).toString();
       });
   }
 
@@ -120,18 +134,29 @@ class _CreategameState extends State<Creategame> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Color(0xFFEE802E),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Create Contest',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 15.0, color: Colors.white, fontFamily: 'Muli'),
+        title: Stack(
+          alignment: Alignment.center,
+          children: [
+            Container(
+              alignment: Alignment.bottomCenter,
+              margin: EdgeInsets.only(top: 100),
+              child: Image.asset(
+                'assets/images/BLRLOGO.png',
+                height: 200,
               ),
-            ],
-          )),
+            ),
+            Container(
+              alignment: Alignment.center,
+              child: Text(
+                'Create Contest',
+                style: TextStyle(
+                    fontSize: 20.0, color: Colors.white, fontFamily: 'Muli'),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Color(0xFFEE802E),
+      ),
       body: WillPopScope(
         child: SingleChildScrollView(
           child: Column(
@@ -219,86 +244,72 @@ class _CreategameState extends State<Creategame> {
                 children: [
                   Expanded(
                       child: GestureDetector(
-                        onTap: () {
-                          _selectTime(context);
-                        },
+                    onTap: () {
+                      _selectTime(context);
+                    },
                     child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xFFEE802E)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
                         margin: EdgeInsets.only(left: 20, right: 5),
-                        child: TextField(
-                          controller: gametime,
-                          obscureText: false,
-                          style: TextStyle(
-                              fontFamily: 'Muli-Regular',
-                              fontSize: 14.0,
-                              color: Color(0xFFEE802E)),
-                          decoration: InputDecoration(
-                            suffixIcon: Icon(
-                              Icons.access_time_outlined,
-                              color: Color(0xFFEE802E),
-                            ),
-                            contentPadding:
-                                EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                            hintText: "Game time",
-                            counter: Offstage(),
-                            hintStyle: TextStyle(
-                                fontFamily: 'Muli-Regular',
-                                fontSize: 14.0,
-                                color: Color(0xFFEE802E)),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                              borderSide: BorderSide(color: Color(0xFFEE802E)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(5.0)),
-                              borderSide: BorderSide(color: Colors.green),
-                            ),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                gametime,
+                                style: TextStyle(
+                                    fontFamily: 'Muli-Regular',
+                                    fontSize: 14.0,
+                                    color: Color(0xFFEE802E)),
+                              ),
+                              Icon(
+                                Icons.access_time,
+                                color: Color(0xFFEE802E),
+                              )
+                            ],
                           ),
                         )),
                   )),
                   Expanded(
-                      child: Container(
-                          margin: EdgeInsets.only(left: 5, right: 20),
-                          child: TextField(
-                            controller: gamedate,
-                            obscureText: false,
-                            style: TextStyle(
-                                fontFamily: 'Muli-Regular',
-                                fontSize: 14.0,
-                                color: Color(0xFFEE802E)),
-                            decoration: InputDecoration(
-                              suffixIcon: Icon(
-                                Icons.calendar_today_outlined,
+                      child: GestureDetector(
+                    onTap: () {
+                      _pickDateDialog();
+                    },
+                    child: Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Color(0xFFEE802E)),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0))),
+                        margin: EdgeInsets.only(left: 5, right: 20),
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                gamedate,
+                                style: TextStyle(
+                                    fontFamily: 'Muli-Regular',
+                                    fontSize: 14.0,
+                                    color: Color(0xFFEE802E)),
+                              ),
+                              Icon(
+                                Icons.calendar_today,
                                 color: Color(0xFFEE802E),
-                              ),
-                              contentPadding:
-                                  EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                              hintText: "Game date",
-                              counter: Offstage(),
-                              hintStyle: TextStyle(
-                                  fontFamily: 'Muli-Regular',
-                                  fontSize: 14.0,
-                                  color: Color(0xFFEE802E)),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0)),
-                                borderSide:
-                                    BorderSide(color: Color(0xFFEE802E)),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(5.0)),
-                                borderSide: BorderSide(color: Colors.green),
-                              ),
-                            ),
-                          )))
+                              )
+                            ],
+                          ),
+                        )),
+                  )),
                 ],
               ),
               Container(
                   height: 100,
                   alignment: Alignment.topLeft,
-                  margin: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 20.0),
+                  margin: EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 20.0),
                   decoration: new BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       border: Border.all(color: Color(0xFFEE802E))),
@@ -413,6 +424,7 @@ class _CreategameState extends State<Creategame> {
                             margin: EdgeInsets.only(left: 20, right: 5),
                             child: TextField(
                               controller: totalplayers,
+                              keyboardType: TextInputType.number,
                               obscureText: false,
                               style: TextStyle(
                                   fontFamily: 'Muli-Regular',
@@ -480,6 +492,7 @@ class _CreategameState extends State<Creategame> {
                 child: TextField(
                   controller: enterentryfeeamount,
                   obscureText: false,
+                  keyboardType: TextInputType.number,
                   style: TextStyle(
                       fontFamily: 'Muli-Regular',
                       fontSize: 14.0,
@@ -520,12 +533,15 @@ class _CreategameState extends State<Creategame> {
                               Icons.arrow_circle_down_sharp,
                               color: Color(0xFFEE802E),
                             ),
-                            hint: Text(
-                              "Get Rules",
-                              style: TextStyle(
-                                  fontFamily: 'Muli-Regular',
-                                  fontSize: 14.0,
-                                  color: Color(0xFFEE802E)),
+                            hint: Container(
+                              margin: EdgeInsets.only(left: 20),
+                              child: Text(
+                                "Get Rules",
+                                style: TextStyle(
+                                    fontFamily: 'Muli-Regular',
+                                    fontSize: 14.0,
+                                    color: Color(0xFFEE802E)),
+                              ),
                             ),
                             isExpanded: true,
                             style: TextStyle(
@@ -539,6 +555,10 @@ class _CreategameState extends State<Creategame> {
                               });
                             },
                             items: snapgetrules.map((item) {
+                              map["RuleId"] = item["_id"];
+                              map["Price"] = "10";
+                              map["Quantity"] = "1";
+
                               return DropdownMenuItem(
                                 child: Container(
                                   margin: EdgeInsets.all(10),
@@ -565,7 +585,7 @@ class _CreategameState extends State<Creategame> {
                               child: Container(
                                   margin: EdgeInsets.only(left: 20, right: 5),
                                   child: TextField(
-                                    controller: totalplayers,
+                                    controller: winneramount,
                                     obscureText: false,
                                     style: TextStyle(
                                         fontFamily: 'Muli-Regular',
@@ -574,7 +594,7 @@ class _CreategameState extends State<Creategame> {
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.fromLTRB(
                                           20.0, 15.0, 20.0, 15.0),
-                                      hintText: "Total Players",
+                                      hintText: "Winner amount",
                                       counter: Offstage(),
                                       hintStyle: TextStyle(
                                           fontFamily: 'Muli-Regular',
@@ -598,7 +618,7 @@ class _CreategameState extends State<Creategame> {
                               child: Container(
                                   margin: EdgeInsets.only(left: 5, right: 20),
                                   child: TextField(
-                                    controller: totalamount,
+                                    controller: totalwinner,
                                     obscureText: false,
                                     style: TextStyle(
                                         fontFamily: 'Muli-Regular',
@@ -607,7 +627,7 @@ class _CreategameState extends State<Creategame> {
                                     decoration: InputDecoration(
                                       contentPadding: EdgeInsets.fromLTRB(
                                           20.0, 15.0, 20.0, 15.0),
-                                      hintText: "Total amount",
+                                      hintText: "Total Winners",
                                       counter: Offstage(),
                                       hintStyle: TextStyle(
                                           fontFamily: 'Muli-Regular',
@@ -635,14 +655,157 @@ class _CreategameState extends State<Creategame> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Container(
-                            margin: EdgeInsets.only(left: 20),
-                            child: Text("Add Rule",
-                                style: TextStyle(
-                                    fontFamily: 'Muli',
-                                    fontSize: 14.0,
-                                    color: Color(0xFFEE802E),
-                                    fontWeight: FontWeight.bold)),
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(15.0)),
+                                      //this right here
+                                      child: Container(
+                                        height: 200,
+                                        decoration:
+                                            BoxDecoration(color: Colors.white),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Container(
+                                                margin: EdgeInsets.only(
+                                                    left: 10, top: 10),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                      margin: EdgeInsets.only(
+                                                          left: 10),
+                                                      child: Text(
+                                                        "Add new rules",
+                                                        style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontFamily: 'Muli',
+                                                            letterSpacing: 0.03,
+                                                            fontSize: 18.0,
+                                                            color: Color(
+                                                                0xFFEE802E)),
+                                                      ),
+                                                    ),
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Container(
+                                                        margin: EdgeInsets.only(
+                                                            right: 10),
+                                                        child: Icon(
+                                                          Icons.close,
+                                                          color:
+                                                              Color(0xFFEE802E),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                )),
+                                            Container(
+                                              margin: EdgeInsets.only(
+                                                  left: 20, right: 20),
+                                              child: TextField(
+                                                controller: addnewrules,
+                                                obscureText: false,
+                                                style: TextStyle(
+                                                    fontFamily: 'Muli-Regular',
+                                                    fontSize: 14.0,
+                                                    color: Color(0xFFEE802E)),
+                                                decoration: InputDecoration(
+                                                  contentPadding:
+                                                      EdgeInsets.fromLTRB(20.0,
+                                                          15.0, 20.0, 15.0),
+                                                  hintText: "Add rule",
+                                                  counter: Offstage(),
+                                                  hintStyle: TextStyle(
+                                                      fontFamily:
+                                                          'Muli-Regular',
+                                                      fontSize: 14.0,
+                                                      color: Color(0xFFEE802E)),
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5.0)),
+                                                    borderSide: BorderSide(
+                                                        color:
+                                                            Color(0xFFEE802E)),
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                5.0)),
+                                                    borderSide: BorderSide(
+                                                        color: Colors.green),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              child: GestureDetector(
+                                                  child: Container(
+                                                margin: EdgeInsets.only(
+                                                    left: 20,
+                                                    right: 20,
+                                                    bottom: 20),
+                                                decoration: BoxDecoration(
+                                                    color: Color(0xFFEE802E),
+                                                    borderRadius:
+                                                        new BorderRadius
+                                                            .circular(40)),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: <Widget>[
+                                                    Container(
+                                                        padding: EdgeInsets.all(
+                                                            10.0),
+                                                        margin:
+                                                            EdgeInsets.fromLTRB(
+                                                                10.0,
+                                                                0.0,
+                                                                0.0,
+                                                                0.0),
+                                                        child: Text("Add",
+                                                            style: new TextStyle(
+                                                                fontSize: 10.0,
+                                                                color: Colors
+                                                                    .white,
+                                                                fontFamily:
+                                                                    'Muli'))),
+                                                  ],
+                                                ),
+                                              )),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(left: 20),
+                              child: Text("Add Rule",
+                                  style: TextStyle(
+                                      fontFamily: 'Muli',
+                                      fontSize: 14.0,
+                                      color: Color(0xFFEE802E),
+                                      fontWeight: FontWeight.bold)),
+                            ),
                           ),
                           Container(
                             margin: EdgeInsets.only(right: 20),
@@ -670,25 +833,82 @@ class _CreategameState extends State<Creategame> {
               ),
               SizedBox(
                 child: GestureDetector(
+                    onTap: () {
+                      String time = formatDate(
+                          DateTime(
+                            _selectDate.year,
+                            _selectDate.month,
+                            _selectDate.day,
+                            selectedTime.hourOfPeriod,
+                            selectedTime.minute,
+                          ),
+                          [
+                            dd,
+                            '/',
+                            mm,
+                            '/',
+                            yyyy,
+                            ' ',
+                            HH,
+                            ':',
+                            nn,
+                            ':',
+                            ss,
+                            ' ',
+                            am
+                          ]);
+
+                      List rules = List();
+
+                      rules.add(map);
+
+                      apimap["ContestName"] = entergamename.text;
+                      apimap["TicketPrice"] = enterentryfeeamount.text;
+                      apimap["StartTime"] = time;
+                      apimap["EndTime"] = time;
+                      apimap["MaxPlayers"] = totalplayers.text;
+                      apimap["NumberGenerateAuto"] = isChecked;
+                      apimap["NumberGenerateDuration"] = 10;
+                      apimap["Rules"] = rules;
+
+                      api
+                          .getStringValuesSF()
+                          .then((value) => {api.postHttp(apimap, value , context)});
+
+                      /*  api.getStringValuesSF().then((value) => {
+                            api
+                                .createcontest(
+                                    entergamename.text,
+                                    enterentryfeeamount.text,
+                                    time,
+                                    "20/01/2021 06:24:00 AM",
+                                    totalplayers.text,
+                                    isChecked.toString(),
+                                    10,
+                                    rules,
+                                    value)
+                                .then((value) => print(value))
+                          });*/
+                    },
                     child: Container(
-                  margin: EdgeInsets.all(20.0),
-                  decoration: BoxDecoration(
-                      color: Color(0xFFEE802E),
-                      borderRadius: new BorderRadius.circular(40)),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                          padding: EdgeInsets.all(10.0),
-                          margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                          child: Text("Submit",
-                              style: new TextStyle(
-                                  fontSize: 10.0,
-                                  color: Colors.white,
-                                  fontFamily: 'Muli'))),
-                    ],
-                  ),
-                )),
+                      margin: EdgeInsets.all(20.0),
+                      decoration: BoxDecoration(
+                          color: Color(0xFFEE802E),
+                          borderRadius: new BorderRadius.circular(40)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container(
+                              padding: EdgeInsets.all(10.0),
+                              margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                              child: Text("Submit",
+                                  style: new TextStyle(
+                                      fontSize: 10.0,
+                                      color: Colors.white,
+                                      fontFamily: 'Muli'))),
+                        ],
+                      ),
+                    )),
               )
             ],
           ),

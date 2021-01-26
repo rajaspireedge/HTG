@@ -91,7 +91,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
             return GestureDetector(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                      builder: (BuildContext context) => Mycontestdetail())),
+                      builder: (BuildContext context) => Mycontestdetail(snapgetcontest[index]["_id"]))),
               child: Stack(
                 alignment: Alignment.topCenter,
                 overflow: Overflow.visible,

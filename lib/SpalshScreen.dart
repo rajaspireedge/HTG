@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
-import 'package:htg/CreateContest.dart';
+import 'package:htg/SignUp.dart';
 import 'package:htg/HomeScreen.dart';
-import 'package:htg/creatingandjoin.dart';
+import 'package:htg/TabMaker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,6 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
     _fcm.getToken().then((value) => print(value));
 
     getStringValuesSF().then((value) {
+      print(value);
       if (value == null) {
         Timer(
             Duration(seconds: 9),

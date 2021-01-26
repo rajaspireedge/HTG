@@ -4,6 +4,7 @@
 
     <application
         android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true"
         android:label="htg">
         <activity
             android:name=".MainActivity"

@@ -1,19 +1,24 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:htg/HomeScreen.dart';
+import 'package:htg/TabMaker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 import 'network_util.dart';
 import 'user.dart';
 
 class RestDatasource {
-  NetworkUtil _netUtil = new NetworkUtil();
   static final BASE_URL = "http://157.245.97.187:9090";
   static final Signup = BASE_URL + "/v1/user/register";
   static final SIGNUPURL = BASE_URL + "/v1/user/signin";
   static final Contest = BASE_URL + "/v1/contest";
+  static final createcontests = BASE_URL + "/v1/user";
   static final rule = BASE_URL + "/v1/rule";
 
   addStringToSF(dynamic data) async {
@@ -21,48 +26,132 @@ class RestDatasource {
     prefs.setString('userID', data["_id"]);
   }
 
-  Future<User> login(String username, String password) {
-    return _netUtil.post(SIGNUPURL,
-        body: {"Mobile": username, "Password": password}).then((dynamic res) {
-      if (res["Status"] == "Success") {
-        addStringToSF(res["Data"]);
-      }
-      if (res["Status"] == "Failure") {
-        var Error = res["Error"];
-        Fluttertoast.showToast(
-            msg: Error["Message"].toString(),
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            timeInSecForIos: 1,
-            backgroundColor: Colors.red,
-            textColor: Colors.white);
-        throw new Exception(res);
-      }
-      return new User.map(res["Data"]);
-    });
+  Future<String> getStringValuesSF() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return
+    return prefs.getString('userID');
   }
 
-  Future<User> signup(String FirstName, String LastName, String Email,
-      String Mobile, String Password) {
-    return _netUtil.post(Signup, body: {
-      "FirstName": FirstName,
-      "LastName": LastName,
-      "Email": Email,
-      "Mobile": Mobile,
-      "Password": Password,
-    }).then((dynamic res) {
-      if (res["Status"] == "Failure") {
-        var Error = res["Error"];
+  void loginapi(Map<String, dynamic> map, BuildContext context) async {
+    try {
+      Response response = await Dio().post(SIGNUPURL, data: map);
+
+      print(response);
+
+      if (response.data["Status"] == "Success") {
         Fluttertoast.showToast(
-            msg: Error["Message"].toString(),
+            msg: "Login Successfully".toString(),
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.CENTER,
             timeInSecForIos: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white);
-        throw new Exception(res);
+
+        addStringToSF(response.data["Data"]);
+
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => CreateAndJoin()));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Fail to Login".toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
       }
-      return;
-    });
+    } catch (e) {}
+  }
+
+  void signup(Map<String, dynamic> map, BuildContext context) async {
+    try {
+      Response response = await Dio().post(Signup, data: map);
+
+      print(response);
+      if (response.data["Status"] == "Success") {
+        Fluttertoast.showToast(
+            msg: "Created Successfully".toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (BuildContext context) => HomeScreen()));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Fail to create".toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void startcontest(String contestid, BuildContext context) async {
+    try {
+      Response response =
+          await Dio().put(Contest + "/" + contestid + "/startcontest");
+
+      print(response.request.data);
+      if (response.data["Status"] == "Success") {
+        Fluttertoast.showToast(
+            msg: response.data["Data"]["message"].toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+
+      } else {
+        Fluttertoast.showToast(
+            msg: response.data["Error"]["Message"].toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void postHttp(
+      Map<String, dynamic> map, String id, BuildContext context) async {
+    try {
+      Response response = await Dio()
+          .post(createcontests + "/" + id + "/createcontest", data: map);
+
+      print(response.request.data);
+
+      if (response.data["Status"] == "Success") {
+        Fluttertoast.showToast(
+            msg: "Created Successfully".toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => CreateAndJoin()));
+      } else {
+        Fluttertoast.showToast(
+            msg: "Fail to create".toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

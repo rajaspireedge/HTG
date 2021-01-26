@@ -11,11 +11,6 @@ class CreateContest extends StatefulWidget {
 }
 
 class _CreateContestState extends State<CreateContest> {
-  TextStyle style = TextStyle(
-      fontFamily: 'Muli-Regular', fontSize: 10.0, color: Color(0xFFEE802E));
-  TextStyle hintstyle = TextStyle(
-      fontFamily: 'Muli-Regular', fontSize: 10.0, color: Colors.grey);
-
   @override
   Widget build(BuildContext context) {
     final fullname_controller = TextEditingController();
@@ -35,11 +30,13 @@ class _CreateContestState extends State<CreateContest> {
     final fullnametext = TextField(
       controller: fullname_controller,
       obscureText: false,
-      style: style,
+      style: TextStyle(
+          fontFamily: 'Muli', fontSize: 16.0, color: Color(0xFFEE802E)),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: "Full name",
-        hintStyle: hintstyle,
+        hintStyle:
+            TextStyle(fontFamily: 'Muli', fontSize: 16.0, color: Colors.grey),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
           borderSide: BorderSide(color: Color(0xFFEE802E)),
@@ -54,11 +51,13 @@ class _CreateContestState extends State<CreateContest> {
     final emailtext = TextField(
       controller: emailtext_controller,
       obscureText: false,
-      style: style,
+      style: TextStyle(
+          fontFamily: 'Muli', fontSize: 16.0, color: Color(0xFFEE802E)),
       decoration: InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: "Email",
-        hintStyle: hintstyle,
+        hintStyle:
+            TextStyle(fontFamily: 'Muli', fontSize: 16.0, color: Colors.grey),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
           borderSide: BorderSide(color: Color(0xFFEE802E)),
@@ -74,19 +73,21 @@ class _CreateContestState extends State<CreateContest> {
 
     final Havearefferealcodetext = Text("Have a Reffral Code?",
         style: TextStyle(
-            fontFamily: 'Muli', fontSize: 10.0, color: Color(0xFFEE802E)));
+            fontFamily: 'Muli', fontSize: 14.0, color: Color(0xFFEE802E)));
 
     final mobilenumbertext = TextField(
       controller: mobilenumbertext_controller,
       obscureText: false,
       maxLength: 10,
-      style: style,
+      style: TextStyle(
+          fontFamily: 'Muli', fontSize: 16.0, color: Color(0xFFEE802E)),
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         counter: Offstage(),
         contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         hintText: "Mobile no.",
-        hintStyle: hintstyle,
+        hintStyle:
+            TextStyle(fontFamily: 'Muli', fontSize: 16.0, color: Colors.grey),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10.0)),
           borderSide: BorderSide(color: Color(0xFFEE802E)),
@@ -101,7 +102,7 @@ class _CreateContestState extends State<CreateContest> {
     final alreadyhaveacount = Text("Already have an account?",
         style: TextStyle(
             fontFamily: 'Muli',
-            fontSize: 10.0,
+            fontSize: 14.0,
             color: Colors.grey,
             fontWeight: FontWeight.bold));
 
@@ -111,18 +112,22 @@ class _CreateContestState extends State<CreateContest> {
         child: Text("Sign In",
             style: TextStyle(
                 fontFamily: 'Muli',
-                fontSize: 10.0,
+                fontSize: 14.0,
                 color: Color(0xFFEE802E),
                 fontWeight: FontWeight.bold)));
+
+    Map<String, dynamic> apimap = Map();
 
     final passwordFields = TextField(
       controller: passwordFields_controller,
       obscureText: true,
-      style: style,
+      style: TextStyle(
+          fontFamily: 'Muli', fontSize: 16.0, color: Color(0xFFEE802E)),
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
-          hintStyle: hintstyle,
+          hintStyle:
+              TextStyle(fontFamily: 'Muli', fontSize: 16.0, color: Colors.grey),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10.0)),
             borderSide: BorderSide(color: Color(0xFFEE802E)),
@@ -138,13 +143,17 @@ class _CreateContestState extends State<CreateContest> {
         child: new Center(
           child: SingleChildScrollView(
             child: Container(
-              color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    Container(
+                      child: Image(image: AssetImage('assets/images/LOGO.png')),
+                      height: 100,
+                      width: 100,
+                    ),
                     signuptext,
                     SizedBox(height: 10.0),
                     fullnametext,
@@ -155,25 +164,25 @@ class _CreateContestState extends State<CreateContest> {
                     SizedBox(height: 10.0),
                     passwordFields,
                     SizedBox(height: 10.0),
-                    Container(
-                      width: 60,
-                      height: 60,
-                      child: InkWell(
-                        onTap: () => api
-                            .signup(
-                                fullname_controller.text,
-                                fullname_controller.text,
-                                emailtext_controller.text,
-                                mobilenumbertext_controller.text,
-                                passwordFields_controller.text)
-                            .then((value) => Navigator.of(context)
-                                .pushReplacement(MaterialPageRoute(
-                                    builder: (BuildContext context) =>
-                                        HomeScreen()))),
+                    GestureDetector(
+                      onTap: () {
+                        print(emailtext_controller.text);
+                        apimap["FirstName"] = fullname_controller.text;
+                        apimap["LastName"] = fullname_controller.text;
+                        apimap["Email"] = emailtext_controller.text;
+                        apimap["Mobile"] = mobilenumbertext_controller.text;
+                        apimap["Password"] = passwordFields_controller.text;
+                        api.signup(apimap, context);
+                      },
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        child:
+                            Image(image: AssetImage('assets/images/Next.png')),
+                        margin: const EdgeInsets.only(top: 10, bottom: 10),
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: Color(0xFFEE802E)),
                       ),
-                      margin: const EdgeInsets.only(top: 10, bottom: 10),
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle, color: Color(0xFFEE802E)),
                     ),
                     SizedBox(height: 10.0),
                     Container(

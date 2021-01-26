@@ -37,13 +37,28 @@ dependencies:
   image_picker: ^0.6.6+1
   loading: ^1.0.2
   custom_switch_button: ^0.5.0
+  date_format: ^1.0.9
+  dio: ^3.0.10
+  integration_test: ^1.0.1
+  percent_indicator: ^2.1.9
+
 
 dev_dependencies:
+
+  build_runner: ^1.6.2
+  build_web_compilers: ^2.0.0
 
   expandable:
 
   flutter_test:
     sdk: flutter
+
+  flutter_launcher_icons: "^0.8.1"
+
+flutter_icons:
+    image_path: 'assets/images/LOGO.png'
+    android: true
+    ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
