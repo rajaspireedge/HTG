@@ -1,47 +1,137 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:htg/Mycontestdetail.dart';
 import 'package:htg/RestDatasource.dart';
+import 'package:http/http.dart' as http;
 
 class GenerateNumber extends StatelessWidget {
-  String id;
+  Map<String, dynamic> contestdetail = Map();
 
-  GenerateNumber(this.id);
+  GenerateNumber(this.contestdetail);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: GenerateNumberFull(id),
+      home: GenerateNumberFull(contestdetail),
     );
   }
 }
 
 class GenerateNumberFull extends StatefulWidget {
-  String id;
+  Map<String, dynamic> contestdetail = Map();
 
-  GenerateNumberFull(this.id);
+  GenerateNumberFull(this.contestdetail);
 
   @override
-  _GenerateNumberFullState createState() => _GenerateNumberFullState(id);
+  _GenerateNumberFullState createState() =>
+      _GenerateNumberFullState(contestdetail);
 }
 
 class _GenerateNumberFullState extends State<GenerateNumberFull> {
-  String id;
+  Map<String, dynamic> contestdetail = Map();
 
-  _GenerateNumberFullState(this.id);
+  _GenerateNumberFullState(this.contestdetail);
 
   var greycolor = Color(0xFF8F8F8F);
   var orangecolor = Color(0xFFEE802E);
+  ScrollController controller = new ScrollController();
+
+  List<dynamic> contestnumbers = [];
+  bool boxvisible = false;
+  int lastnumber = 0;
+
+  Future<String> getGenerateNumber() async {
+    var res = await http.post(
+        Uri.encodeFull(
+            RestDatasource.Contest + "/" + contestdetail["_id"] + "/number"),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        });
+    var resBody = json.decode(res.body);
+    setState(() {
+      getGetGenerateNumber();
+    });
+    return "Success";
+  }
+
+  Future<String> getGetGenerateNumber() async {
+    var res = await http.get(
+        Uri.encodeFull(
+            RestDatasource.Contest + "/" + contestdetail["_id"] + "/number"),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        });
+
+    var resBody = json.decode(res.body);
+
+    setState(() {
+      contestnumbers = resBody["Data"]["Numbers"];
+
+      if (contestnumbers.length == 0) {
+        boxvisible = false;
+      } else {
+        boxvisible = true;
+      }
+
+      lastnumber = resBody["Data"]["LastNumber"];
+      contestnumbers.remove(resBody["Data"]["LastNumber"]);
+      controller.animateTo(
+        controller.position.minScrollExtent,
+        duration: Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      );
+    });
+    return "Success";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.getGetGenerateNumber();
+  }
 
   @override
   Widget build(BuildContext context) {
-    ScrollController controller = new ScrollController();
-
     var color = Color(0xFFEE802E);
 
     RestDatasource api = new RestDatasource();
+
+    Widget Startbutton() {
+      if (contestdetail["IsRunning"] == true) {
+        return GestureDetector(
+          onTap: () {
+            getGenerateNumber();
+          },
+          child: Container(
+              decoration: BoxDecoration(
+                  color: orangecolor,
+                  borderRadius: new BorderRadius.circular(20.0)),
+              padding: EdgeInsets.only(top: 5, bottom: 5, right: 20, left: 20),
+              child: Text("Generate",
+                  style: new TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.white,
+                      fontFamily: 'Muli'))),
+        );
+      }
+
+      return GestureDetector(
+        onTap: () {},
+        child: Container(
+            decoration: BoxDecoration(
+                color: orangecolor,
+                borderRadius: new BorderRadius.circular(20.0)),
+            padding: EdgeInsets.only(top: 5, bottom: 5, right: 20, left: 20),
+            child: Text("Start",
+                style: new TextStyle(
+                    fontSize: 14.0, color: Colors.white, fontFamily: 'Muli'))),
+      );
+    }
 
     List<Widget> myRowChildren = [];
     List<List<int>> numbers = [];
@@ -64,12 +154,12 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
         .map(
           (columns) => Column(
             children: columns.map((nr) {
-              /*  if(nr==85){
+              if (contestnumbers.contains(nr) || lastnumber == nr) {
                 return Container(
                   alignment: Alignment.center,
                   height: 35,
                   width: 35,
-                  color: color,
+                  color: orangecolor,
                   child: Padding(
                     padding: EdgeInsets.all(5.0),
                     child: Text(
@@ -78,7 +168,7 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
                   ),
                 );
               }
-*/
+
               return Container(
                 alignment: Alignment.center,
                 height: 35,
@@ -147,29 +237,46 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
                                         child: ListView.builder(
                                           shrinkWrap: true,
                                           controller: controller,
+                                          reverse: true,
                                           scrollDirection: Axis.horizontal,
                                           itemBuilder: (context, index) {
                                             return Container(
                                               margin: EdgeInsets.only(
                                                   left: 5, right: 10),
                                               alignment: Alignment.center,
-                                              child: Text(index.toString(),
+                                              child: Text(
+                                                  contestnumbers[index]
+                                                      .toString(),
                                                   style: new TextStyle(
                                                       fontSize: 14.0,
                                                       color: Colors.grey,
                                                       fontFamily: 'Muli')),
                                             );
                                           },
-                                          itemCount: 10,
+                                          itemCount: contestnumbers.length,
                                         ),
                                       )),
-                                  Container(
-                                    height: 50,
-                                    width: 50,
-                                    margin: EdgeInsets.only(right: 10),
-                                    decoration: BoxDecoration(
-                                        border: Border.all(color: color)),
-                                  ),
+                                  Visibility(
+                                      visible: boxvisible,
+                                      child: Card(
+                                        elevation: 10,
+                                        child: Container(
+                                          height: 50,
+                                          alignment: Alignment.center,
+                                          child: Container(
+                                            alignment: Alignment.center,
+                                            child: Text(lastnumber.toString(),
+                                                style: new TextStyle(
+                                                    fontSize: 20.0,
+                                                    color: orangecolor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Muli')),
+                                          ),
+                                          width: 50,
+                                          decoration: BoxDecoration(
+                                              border: Border.all(color: color)),
+                                        ),
+                                      )),
                                 ],
                               ),
                               Container(
@@ -181,19 +288,10 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
                                   children: <Widget>[
                                     GestureDetector(
                                       onTap: () {
-                                        api.startcontest(id, context);
+                                        api.startcontest(
+                                            contestdetail["_id"], context);
                                       },
-                                      child: Container(
-                                          padding: EdgeInsets.only(
-                                              top: 8,
-                                              bottom: 8,
-                                              right: 15,
-                                              left: 15),
-                                          child: Text("Start",
-                                              style: new TextStyle(
-                                                  fontSize: 14.0,
-                                                  color: Colors.white,
-                                                  fontFamily: 'Muli'))),
+                                      child: Startbutton(),
                                     )
                                   ],
                                 ),
@@ -316,7 +414,8 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
               ),
               onWillPop: () async {
                 return Navigator.of(context).pushReplacement(MaterialPageRoute(
-                    builder: (BuildContext context) => Mycontestdetail(id)));
+                    builder: (BuildContext context) =>
+                        Mycontestdetail(contestdetail["_id"])));
               })),
     );
   }

@@ -8,6 +8,9 @@ import 'package:htg/RestDatasource.dart';
 import 'package:http/http.dart' as http;
 import 'package:loading/indicator/ball_pulse_indicator.dart';
 import 'package:loading/loading.dart';
+import 'package:percent_indicator/percent_indicator.dart';
+import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
+
 
 class Tab1 extends StatefulWidget {
   @override
@@ -16,6 +19,11 @@ class Tab1 extends StatefulWidget {
 
 class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
   List<dynamic> snapgetcontest;
+
+  var greycolor = Color(0xFF8F8F8F);
+  var orangecolor = Color(0xFFEE802E);
+
+  var _currentValue=0;
 
   Future<String> getContest() async {
     var res = await http.get(Uri.encodeFull(RestDatasource.Contest), headers: {
@@ -48,13 +56,6 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
       final hexCode = hexColor.replaceAll('#', '');
       return Color(int.parse('FF$hexCode', radix: 16));
     }
-
-    const border = Border(
-      top: BorderSide(width: 1.0, color: Colors.grey),
-      left: BorderSide(width: 1.0, color: Colors.grey),
-      right: BorderSide(width: 1.0, color: Colors.grey),
-      bottom: BorderSide(width: 1.0, color: Colors.grey),
-    );
 
     if (snapgetcontest == null) {
       return Container(
@@ -91,7 +92,8 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
             return GestureDetector(
               onTap: () => Navigator.of(context).pushReplacement(
                   MaterialPageRoute(
-                      builder: (BuildContext context) => Mycontestdetail(snapgetcontest[index]["_id"]))),
+                      builder: (BuildContext context) =>
+                          Mycontestdetail(snapgetcontest[index]["_id"]))),
               child: Stack(
                 alignment: Alignment.topCenter,
                 overflow: Overflow.visible,
@@ -99,11 +101,10 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                 children: <Widget>[
                   Card(
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                      margin: EdgeInsets.fromLTRB(10.0, 20.0, 20.0, 10.0),
+                      margin: EdgeInsets.fromLTRB(30.0, 20.0, 30.0, 10.0),
                       child: Container(
-                        height: 150,
                         child: Column(
                           children: <Widget>[
                             Container(
@@ -111,7 +112,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                               height: 60,
                               child: Container(
                                 margin:
-                                    EdgeInsets.fromLTRB(40.0, 20.0, 0.0, 0.0),
+                                    EdgeInsets.fromLTRB(20.0, 20.0, 0.0, 0.0),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
@@ -131,66 +132,123 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                               decoration: BoxDecoration(
                                 color: _colorFromHex("#FDE6D5"),
                                 borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20.0),
-                                    topRight: Radius.circular(20.0)),
+                                    topLeft: Radius.circular(15.0),
+                                    topRight: Radius.circular(15.0)),
                               ),
                               margin: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 10.0),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Container(
-                                  child: Text("200\nwinners",
-                                      style: new TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.black,
-                                          fontFamily: 'Muli-Light')),
-                                  alignment: Alignment.center,
-                                  margin:
-                                      EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                                ),
-                                Container(
-                                  child: Text("3 Crores",
-                                      style: new TextStyle(
-                                          fontSize: 14.0,
-                                          color: Color(0xFFEE802E),
-                                          fontFamily: 'Muli')),
-                                  alignment: Alignment.center,
-                                ),
-                                Container(
-                                  child: Text(
-                                      snapgetcontest[index]["TicketPrice"]
-                                              .toString() +
-                                          " Rs",
-                                      style: new TextStyle(
-                                          fontSize: 14.0,
-                                          color: Colors.black,
-                                          fontFamily: 'Muli')),
-                                  alignment: Alignment.center,
-                                  margin:
-                                      EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
-                                ),
-                              ],
+                            Container(
+                              margin: EdgeInsets.only(bottom: 10),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    margin: EdgeInsets.only(left: 5),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                              snapgetcontest[index]
+                                                      ["MaxPlayers"]
+                                                  .toString(),
+                                              style: new TextStyle(
+                                                  fontSize: 10.0,
+                                                  color: greycolor,
+                                                  fontFamily: 'Muli-Light')),
+                                          alignment: Alignment.center,
+                                          margin: EdgeInsets.fromLTRB(
+                                              20.0, 0.0, 0.0, 0.0),
+                                        ),
+                                        Container(
+                                          child: Text("winners",
+                                              style: new TextStyle(
+                                                  fontSize: 10.0,
+                                                  color: greycolor,
+                                                  fontFamily: 'Muli-Light')),
+                                          alignment: Alignment.center,
+                                          margin: EdgeInsets.fromLTRB(
+                                              20.0, 0.0, 0.0, 0.0),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Text(
+                                        "\u20B9" +
+                                            snapgetcontest[index]["TicketPrice"]
+                                                .toString(),
+                                        style: new TextStyle(
+                                            fontSize: 15.0,
+                                            color: orangecolor,
+                                            fontFamily: 'Muli')),
+                                    alignment: Alignment.center,
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.only(right: 10),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                              snapgetcontest[index]
+                                                      ["MaxPlayers"]
+                                                  .toString(),
+                                              style: new TextStyle(
+                                                  fontSize: 10.0,
+                                                  color: greycolor,
+                                                  fontFamily: 'Muli-Light')),
+                                          alignment: Alignment.center,
+                                          margin: EdgeInsets.fromLTRB(
+                                              0.0, 0.0, 20.0, 0.0),
+                                        ),
+                                        Container(
+                                          child: Text("winners",
+                                              style: new TextStyle(
+                                                  fontSize: 10.0,
+                                                  color: greycolor,
+                                                  fontFamily: 'Muli-Light')),
+                                          alignment: Alignment.center,
+                                          margin: EdgeInsets.fromLTRB(
+                                              0.0, 0.0, 20.0, 0.0),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              margin: EdgeInsets.only(right: 20 , left: 20 , bottom: 20),
+                              child: FAProgressBar(
+                                currentValue: 60,
+                                size: 10,
+                                maxValue: 150,
+                                changeColorValue: 100,
+                                border: Border.all(color: greycolor , width: 0.3),
+                                backgroundColor: Colors.white,
+                                progressColor: Color(0xFFEE802E),
+                                direction: Axis.horizontal,
+                                verticalDirection: VerticalDirection.up,
+                              ),
                             )
                           ],
                         ),
                         decoration: BoxDecoration(
                             borderRadius: new BorderRadius.circular(4.0)),
                       )),
-                  Container(
-                    width: 150.0,
-                    transform: Matrix4.translationValues(0.0, -10.0, 0.0),
-                    height: 25.0,
-                    margin: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
-                    alignment: Alignment.center,
-                    child: Text("1h : 20m : 5s",
-                        style: new TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.white,
-                            fontFamily: 'Muli-ExtraBold')),
-                    decoration: BoxDecoration(
-                        color: Color(0xFFEE802E),
-                        borderRadius: new BorderRadius.circular(4.0)),
+                  Card(
+                    margin: EdgeInsets.only(top: 10),
+                    color: Color(0xFFEE802E),
+                    child: Container(
+                      width: 150.0,
+                      height: 20,
+                      alignment: Alignment.center,
+                      child: Text("1h : 20m : 5s",
+                          style: new TextStyle(
+                              fontSize: 12.0,
+                              color: Colors.white,
+                              fontFamily: 'Muli-ExtraBold')),
+                    ),
                   ),
                 ],
               ),

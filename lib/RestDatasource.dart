@@ -107,7 +107,6 @@ class RestDatasource {
             timeInSecForIos: 1,
             backgroundColor: Colors.red,
             textColor: Colors.white);
-
       } else {
         Fluttertoast.showToast(
             msg: response.data["Error"]["Message"].toString(),
@@ -127,8 +126,6 @@ class RestDatasource {
     try {
       Response response = await Dio()
           .post(createcontests + "/" + id + "/createcontest", data: map);
-
-      print(response.request.data);
 
       if (response.data["Status"] == "Success") {
         Fluttertoast.showToast(

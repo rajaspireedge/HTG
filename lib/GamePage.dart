@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:htg/RestDatasource.dart';
 import 'package:htg/TabMaker.dart';
+import 'package:http/http.dart' as http;
 
 class JoinGame extends StatelessWidget {
-  String id;
+  Map<String, dynamic> contestdetail = Map();
 
-  JoinGame(this.id);
+  JoinGame(this.contestdetail);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +19,7 @@ class JoinGame extends StatelessWidget {
         primarySwatch: Colors.orange,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(id),
+      home: MyHomePage(contestdetail),
     );
   }
 }
@@ -44,8 +47,8 @@ Widget _myListView(BuildContext context) {
                         color: Colors.black,
                         fontFamily: 'Muli'))),
             Container(
-                width: 50,
-                alignment: Alignment.centerLeft,
+                width: 70,
+                alignment: Alignment.center,
                 padding: EdgeInsets.all(5.0),
                 child: Text("50",
                     style: new TextStyle(
@@ -53,9 +56,8 @@ Widget _myListView(BuildContext context) {
                         color: Color(0xFFEE802E),
                         fontFamily: 'Muli'))),
             Container(
-                width: 80,
+                width: 120,
                 alignment: Alignment.center,
-                margin: EdgeInsets.only(right: 30),
                 child: Container(
                   width: 60,
                   padding: EdgeInsets.only(top: 4, bottom: 4),
@@ -63,7 +65,7 @@ Widget _myListView(BuildContext context) {
                       color: Color(0xFF39B54A),
                       borderRadius: new BorderRadius.circular(5)),
                   alignment: Alignment.center,
-                  child: Text("1500",
+                  child: Text("\u20B9" + "1500",
                       style: new TextStyle(
                           fontSize: 13.0,
                           color: Colors.white,
@@ -78,57 +80,103 @@ Widget _myListView(BuildContext context) {
 }
 
 class MyHomePage extends StatefulWidget {
-  String id;
+  Map<String, dynamic> contestdetail = Map();
 
-  MyHomePage(this.id);
+  MyHomePage(this.contestdetail);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState(id);
+  _MyHomePageState createState() => _MyHomePageState(contestdetail);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  String id;
+  Map<String, dynamic> contestdetail = Map();
 
-  _MyHomePageState(this.id);
+  _MyHomePageState(this.contestdetail);
 
   var greycolor = Color(0xFF8F8F8F);
   var orangecolor = Color(0xFFEE802E);
   ScrollController controller = new ScrollController();
 
+  List<dynamic> contestnumbers = [];
+  List<dynamic> selectednumber = [];
+  List<dynamic> tablenumbers0 = [];
+  List<dynamic> tablenumbers1 = [];
+  List<dynamic> tablenumbers2 = [];
+  List<dynamic> ContestRules = [];
+
+  bool boxvisible = false;
+  int lastnumber = 0;
+  bool rightdesign = false;
+
+  Future<String> getGetGenerateNumber() async {
+    var res = await http.get(
+        Uri.encodeFull(
+            RestDatasource.Contest + "/" + contestdetail["_id"] + "/number"),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        });
+
+    var resBody = json.decode(res.body);
+
+    setState(() {
+      contestnumbers = resBody["Data"]["Numbers"];
+
+      if (contestnumbers.length == 0) {
+        boxvisible = false;
+      } else {
+        boxvisible = true;
+      }
+
+      lastnumber = resBody["Data"]["LastNumber"];
+      contestnumbers.remove(resBody["Data"]["LastNumber"]);
+      controller.animateTo(
+        controller.position.minScrollExtent,
+        duration: Duration(seconds: 1),
+        curve: Curves.fastOutSlowIn,
+      );
+    });
+    return "Success";
+  }
+
+  Future<String> getTableNumbers() async {
+    var res = await http.get(
+        Uri.encodeFull(RestDatasource.createcontests +
+            "/" +
+            contestdetail["CreatedBy"] +
+            "/contestticket/" +
+            contestdetail["_id"]),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        });
+
+    var resBody = json.decode(res.body);
+
+    setState(() {
+      List<dynamic> tablenumbersrows = [];
+      tablenumbersrows = resBody["Data"]["HouseyTicket"];
+
+      for (int i = 0; i < tablenumbersrows.length; i++) {
+        tablenumbers0 = tablenumbersrows[0];
+        tablenumbers1 = tablenumbersrows[1];
+        tablenumbers2 = tablenumbersrows[2];
+      }
+    });
+
+    return "Success";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.getGetGenerateNumber();
+    this.getTableNumbers();
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> myRowChildren = [];
-    List<List<int>> numbers = [];
-    List<int> columnNumbers = [];
-    int z = 1;
-
-    for (int i = 0; i <= 8; i++) {
-      int maxColNr = 2;
-      for (int y = 0; y <= maxColNr; y++) {
-        int currentNumber = z + y; // 0,1,2,3,4,5,6,7,8,9,10, 10,11, 12, 13,14
-        columnNumbers.add(currentNumber);
-      }
-      z += maxColNr + 1;
-      numbers.add(columnNumbers);
-      columnNumbers = [];
-    }
-
-    myRowChildren = numbers
-        .map(
-          (columns) => Column(
-            children: columns.map((nr) {
-              return Container(
-                child: Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Text(
-                    nr.toString(),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        )
-        .toList();
+    ContestRules = contestdetail["ContestRules"];
 
     return Scaffold(
         body: WillPopScope(
@@ -169,31 +217,36 @@ class _MyHomePageState extends State<MyHomePage> {
                 Stack(
                   alignment: Alignment.topCenter,
                   children: [
-                    Container(
-                      height: 50,
-                      alignment: Alignment.topLeft,
-                      margin: EdgeInsets.only(left: 20),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.all(0),
-                        controller: controller,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Container(
-                              margin: EdgeInsets.only(left: 5, right: 10),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    child: Text(index.toString(),
-                                        style: new TextStyle(
-                                            fontSize: 14.0,
-                                            color: Colors.grey,
-                                            fontFamily: 'Muli')),
-                                  )
-                                ],
-                              ));
-                        },
-                        itemCount: 0,
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        height: 50,
+                        width: 130,
+                        margin: EdgeInsets.only(left: 20),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.all(0),
+                          controller: controller,
+                          reverse: true,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Container(
+                                margin: EdgeInsets.only(left: 5, right: 10),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      child: Text(
+                                          contestnumbers[index].toString(),
+                                          style: new TextStyle(
+                                              fontSize: 14.0,
+                                              color: Colors.grey,
+                                              fontFamily: 'Muli')),
+                                    )
+                                  ],
+                                ));
+                          },
+                          itemCount: contestnumbers.length,
+                        ),
                       ),
                     ),
                     Container(
@@ -203,6 +256,15 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Container(
                           height: 50,
                           width: 50,
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: Text(lastnumber.toString(),
+                                style: new TextStyle(
+                                    fontSize: 20.0,
+                                    color: orangecolor,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Muli')),
+                          ),
                           color: Colors.white,
                         ),
                       ),
@@ -213,19 +275,392 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
             Container(
-              margin: EdgeInsets.all(20.0),
-              child: Table(
-                children: [
-                  TableRow(
-                    children: myRowChildren,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Color(0xFFEE802E),
+                decoration: BoxDecoration(
+                    color: orangecolor,
+                    borderRadius: new BorderRadius.circular(20.0)),
+                padding:
+                    EdgeInsets.only(top: 5, bottom: 5, right: 20, left: 20),
+                child: Text("Claim",
+                    style: new TextStyle(
+                        fontSize: 14.0,
+                        color: Colors.white,
+                        fontFamily: 'Muli'))),
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: orangecolor, width: 2),
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              margin: EdgeInsets.all(10.0),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  children: [
+                    Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom:
+                                  BorderSide(color: orangecolor, width: 2))),
+                      child: ListView.builder(
+                        itemCount: tablenumbers0.length,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          int lastindex = tablenumbers0.length - 1;
+
+                          if (index == lastindex) {
+                            if (selectednumber.contains(tablenumbers0[index]) &&
+                                tablenumbers0[index] != 0) {
+                              return Container(
+                                  width: 30,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/bgimgno.png'))),
+                                  margin: EdgeInsets.only(
+                                    right: 5,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectednumber
+                                            .add(tablenumbers0[index]);
+                                      });
+                                    },
+                                    child: Text(tablenumbers0[index].toString(),
+                                        style: new TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontFamily: 'Muli')),
+                                  ));
+                            }
+
+                            return Container(
+                                width: 30,
+                                height: 10,
+                                margin: EdgeInsets.only(
+                                  right: 5,
+                                ),
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectednumber.add(tablenumbers0[index]);
+                                    });
+                                  },
+                                  child: Text(tablenumbers0[index].toString(),
+                                      style: new TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontFamily: 'Muli')),
+                                ));
+                          }
+
+                          if (selectednumber.contains(tablenumbers0[index]) &&
+                              tablenumbers0[index] != 0) {
+                            return Container(
+                                width: 30,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        right: BorderSide(
+                                            color: orangecolor, width: 2)),
+                                    image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/bgimgno.png'))),
+                                margin: EdgeInsets.only(
+                                  right: 5,
+                                ),
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectednumber.add(tablenumbers0[index]);
+                                    });
+                                  },
+                                  child: Text(tablenumbers0[index].toString(),
+                                      style: new TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontFamily: 'Muli')),
+                                ));
+                          }
+
+                          return Container(
+                              width: 30,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      right: BorderSide(
+                                          color: orangecolor, width: 2))),
+                              margin: EdgeInsets.only(
+                                right: 5,
+                              ),
+                              alignment: Alignment.center,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectednumber.add(tablenumbers0[index]);
+                                  });
+                                },
+                                child: Text(tablenumbers0[index].toString(),
+                                    style: new TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14.0,
+                                        color: Colors.black,
+                                        fontFamily: 'Muli')),
+                              ));
+                        },
                       ),
-                      borderRadius: BorderRadius.circular(10.0),
                     ),
-                  )
-                ],
+                    Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                          border: Border(
+                              bottom:
+                                  BorderSide(color: orangecolor, width: 2))),
+                      child: ListView.builder(
+                        itemCount: tablenumbers0.length,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          int lastindex = tablenumbers1.length - 1;
+
+                          if (index == lastindex) {
+                            if (selectednumber.contains(tablenumbers1[index]) &&
+                                tablenumbers1[index] != 0) {
+                              return Container(
+                                  width: 30,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/bgimgno.png'))),
+                                  margin: EdgeInsets.only(
+                                    right: 5,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectednumber
+                                            .add(tablenumbers1[index]);
+                                      });
+                                    },
+                                    child: Text(tablenumbers1[index].toString(),
+                                        style: new TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontFamily: 'Muli')),
+                                  ));
+                            }
+
+                            return Container(
+                                width: 30,
+                                height: 10,
+                                margin: EdgeInsets.only(
+                                  right: 5,
+                                ),
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectednumber.add(tablenumbers1[index]);
+                                    });
+                                  },
+                                  child: Text(tablenumbers1[index].toString(),
+                                      style: new TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontFamily: 'Muli')),
+                                ));
+                          }
+
+                          if (selectednumber.contains(tablenumbers1[index]) &&
+                              tablenumbers1[index] != 0) {
+                            return Container(
+                                width: 30,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        right: BorderSide(
+                                            color: orangecolor, width: 2)),
+                                    image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/bgimgno.png'))),
+                                margin: EdgeInsets.only(
+                                  right: 5,
+                                ),
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectednumber.add(tablenumbers1[index]);
+                                    });
+                                  },
+                                  child: Text(tablenumbers1[index].toString(),
+                                      style: new TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontFamily: 'Muli')),
+                                ));
+                          }
+
+                          return Container(
+                              width: 30,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      right: BorderSide(
+                                          color: orangecolor, width: 2))),
+                              margin: EdgeInsets.only(
+                                right: 5,
+                              ),
+                              alignment: Alignment.center,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectednumber.add(tablenumbers1[index]);
+                                  });
+                                },
+                                child: Text(tablenumbers1[index].toString(),
+                                    style: new TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14.0,
+                                        color: Colors.black,
+                                        fontFamily: 'Muli')),
+                              ));
+                        },
+                      ),
+                    ),
+                    Container(
+                      height: 40,
+                      child: ListView.builder(
+                        itemCount: tablenumbers2.length,
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (context, index) {
+                          int lastindex = tablenumbers2.length - 1;
+
+                          if (index == lastindex) {
+                            if (selectednumber.contains(tablenumbers2[index]) &&
+                                tablenumbers2[index] != 0) {
+                              return Container(
+                                  width: 30,
+                                  height: 10,
+                                  decoration: BoxDecoration(
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                              'assets/images/bgimgno.png'))),
+                                  margin: EdgeInsets.only(
+                                    right: 5,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectednumber
+                                            .add(tablenumbers2[index]);
+                                      });
+                                    },
+                                    child: Text(tablenumbers2[index].toString(),
+                                        style: new TextStyle(
+                                            fontSize: 14.0,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontFamily: 'Muli')),
+                                  ));
+                            }
+
+                            return Container(
+                                width: 30,
+                                height: 10,
+                                margin: EdgeInsets.only(
+                                  right: 5,
+                                ),
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectednumber.add(tablenumbers2[index]);
+                                    });
+                                  },
+                                  child: Text(tablenumbers2[index].toString(),
+                                      style: new TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontFamily: 'Muli')),
+                                ));
+                          }
+
+                          if (selectednumber.contains(tablenumbers2[index]) &&
+                              tablenumbers2[index] != 0) {
+                            return Container(
+                                width: 30,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                    border: Border(
+                                        right: BorderSide(
+                                            color: orangecolor, width: 2)),
+                                    image: DecorationImage(
+                                        image: AssetImage(
+                                            'assets/images/bgimgno.png'))),
+                                margin: EdgeInsets.only(
+                                  right: 5,
+                                ),
+                                alignment: Alignment.center,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectednumber.add(tablenumbers2[index]);
+                                    });
+                                  },
+                                  child: Text(tablenumbers2[index].toString(),
+                                      style: new TextStyle(
+                                          fontSize: 14.0,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontFamily: 'Muli')),
+                                ));
+                          }
+
+                          return Container(
+                              width: 30,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                  border: Border(
+                                      right: BorderSide(
+                                          color: orangecolor, width: 2))),
+                              margin: EdgeInsets.only(
+                                right: 5,
+                              ),
+                              alignment: Alignment.center,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectednumber.add(tablenumbers2[index]);
+                                  });
+                                },
+                                child: Text(tablenumbers2[index].toString(),
+                                    style: new TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14.0,
+                                        color: Colors.black,
+                                        fontFamily: 'Muli')),
+                              ));
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(
@@ -259,7 +694,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       width: 120,
                       alignment: Alignment.center,
                       padding: EdgeInsets.all(5.0),
-                      margin: EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
                       child: Text("Winners Prize",
                           style: new TextStyle(
                               fontSize: 14.0,
