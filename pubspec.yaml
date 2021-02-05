@@ -81,6 +81,7 @@ flutter:
       fonts:
         - asset: fonts/Muli.ttf
         - asset: fonts/Muli-Bold.ttf
+        - asset: fonts/Muli-Light.ttf
 
 
   # To add assets to your application, add an assets section, like this:

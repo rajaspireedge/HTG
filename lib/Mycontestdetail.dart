@@ -23,11 +23,6 @@ class Mycontestdetail extends StatefulWidget {
   _MycontestdetailState createState() => _MycontestdetailState(this.id);
 }
 
-Color _colorFromHex(String hexColor) {
-  final hexCode = hexColor.replaceAll('#', '');
-  return Color(int.parse('FF$hexCode', radix: 16));
-}
-
 TextStyle styleorange = TextStyle(fontFamily: 'Muli-Regular', fontSize: 14.0);
 
 class _MycontestdetailState extends State<Mycontestdetail> {
@@ -40,16 +35,78 @@ class _MycontestdetailState extends State<Mycontestdetail> {
 
   var greycolor = Color(0xFF8F8F8F);
   var orangecolor = Color(0xFFEE802E);
+  RestDatasource api = new RestDatasource();
 
-  Widget _myListView(BuildContext context) {
+  Widget button(BuildContext context) {
+    String jointext;
+
+    if (snapgetcontest["IsJoin"]) {
+      jointext = "Running";
+    } else {
+      jointext = "Join";
+    }
+
+    return SizedBox(
+      child: GestureDetector(
+          onTap: () => {
+                api.getStringValuesSF().then((value) => {
+                      print("createdby " + value),
+                      if (value == snapgetcontest["CreatedBy"])
+                        {
+                          Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      GenerateNumber(snapgetcontest)))
+                        }
+                      else
+                        {
+                          if (snapgetcontest["IsJoin"])
+                            {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          JoinGame(snapgetcontest)))
+                            }
+                          else
+                            {
+                              api.getStringValuesSF().then((value) =>
+                                  api.joincontest(snapgetcontest["_id"], value,
+                                      snapgetcontest, context))
+                            }
+                        }
+                    })
+              },
+          child: Container(
+            margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+            decoration: BoxDecoration(
+                color: Color(0xFFEE802E),
+                borderRadius: new BorderRadius.circular(40)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.all(10.0),
+                    child: Text(jointext,
+                        style: new TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.white,
+                            fontFamily: 'Muli'))),
+              ],
+            ),
+          )),
+    );
+  }
+
+  Widget _myListView(BuildContext context, List<dynamic> ruleslistss) {
     return ListView.builder(
-      itemCount: rulelist.length,
+      itemCount: ruleslistss.length,
       primary: false,
       shrinkWrap: true,
-      padding: EdgeInsets.only(top: 5),
+      padding: EdgeInsets.only(top: 5, left: 20),
       itemBuilder: (context, index) {
         return Container(
-          margin: EdgeInsets.only(right: 12, left: 12),
+          margin: EdgeInsets.only(right: 30, left: 10),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
@@ -57,22 +114,17 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                   padding: EdgeInsets.all(5.0),
                   width: 80,
                   alignment: Alignment.center,
-                  margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                  child: Text("First Rule",
-                      style: new TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.black,
-                          fontFamily: 'Muli'))),
+                  child: Text(ruleslistss[index]["RuleName"],
+                      style:
+                          new TextStyle(fontSize: 14.0, fontFamily: 'Muli'))),
               Container(
-                  width: 70,
+                  width: 80,
                   alignment: Alignment.center,
                   child: Text("50",
-                      style: new TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.black,
-                          fontFamily: 'Muli'))),
+                      style:
+                          new TextStyle(fontSize: 14.0, fontFamily: 'Muli'))),
               Container(
-                  width: 120,
+                  width: 100,
                   alignment: Alignment.center,
                   child: Container(
                     width: 60,
@@ -81,7 +133,7 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                         color: Color(0xFF39B54A),
                         borderRadius: new BorderRadius.circular(5)),
                     alignment: Alignment.center,
-                    child: Text("\u20B9" + "1500",
+                    child: Text("\u20B9" + ruleslistss[index]["Price"],
                         style: new TextStyle(
                             fontSize: 13.0,
                             color: Colors.white,
@@ -95,9 +147,10 @@ class _MycontestdetailState extends State<Mycontestdetail> {
     );
   }
 
-  Future<String> getContest() async {
+  Future<String> getContest(String userid) async {
     var res = await http.get(
-        Uri.encodeFull(RestDatasource.Contest + "/" + id + "/details"),
+        Uri.encodeFull(
+            RestDatasource.Contest + "/" + id + "/details?UserId=" + userid),
         headers: {
           "Accept": "application/json",
           "content-type": "application/json"
@@ -118,15 +171,12 @@ class _MycontestdetailState extends State<Mycontestdetail> {
   @override
   void initState() {
     super.initState();
-    print('initState Tab1');
-    this.getContest();
+    api.getStringValuesSF().then((value) => getContest(value));
   }
 
   @override
   Widget build(BuildContext context) {
     print(id);
-
-    RestDatasource api = new RestDatasource();
 
     if (snapgetcontest.isEmpty) {
       return Container(
@@ -149,26 +199,46 @@ class _MycontestdetailState extends State<Mycontestdetail> {
             children: <Widget>[
               Container(
                   width: double.infinity,
-                  height: 100,
+                  height: 120,
                   color: Color(0xFFEE802E),
                   child: Container(
-                    margin: EdgeInsets.only(left: 80, top: 40),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(snapgetcontest["ContestName"],
-                            style: new TextStyle(
-                                fontSize: 18.0,
-                                color: Colors.white,
-                                fontFamily: 'Muli-Light')),
-                        Text("John Doe",
-                            style: new TextStyle(
-                                fontSize: 12.0,
-                                color: Colors.white,
-                                fontFamily: 'Muli'))
-                      ],
-                    ),
-                  )),
+                      margin: EdgeInsets.only(left: 20, top: 55),
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                          CreateAndJoin()));
+                            },
+                            child: Container(
+                              alignment: Alignment.topCenter,
+                              margin: EdgeInsets.only(right: 20),
+                              child: Image(
+                                image: AssetImage('assets/images/back.png'),
+                                height: 30,
+                                width: 30,
+                              ),
+                            ),
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(snapgetcontest["ContestName"],
+                                  style: new TextStyle(
+                                      fontSize: 15.0,
+                                      color: Colors.white,
+                                      fontFamily: 'Muli-Light')),
+                              Text("John Doe",
+                                  style: new TextStyle(
+                                      fontSize: 12.0,
+                                      color: Colors.white,
+                                      fontFamily: 'Muli'))
+                            ],
+                          ),
+                        ],
+                      ))),
               Stack(
                 alignment: Alignment.topCenter,
                 overflow: Overflow.visible,
@@ -179,12 +249,12 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                     child: Column(
                       children: <Widget>[
                         Container(
-                          margin: EdgeInsets.only(bottom: 20),
+                          margin:
+                              EdgeInsets.only(bottom: 10, left: 30, right: 30),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
                               Container(
-                                margin: EdgeInsets.only(left: 5),
                                 child: Column(
                                   children: [
                                     Container(
@@ -192,36 +262,44 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                           snapgetcontest["MaxPlayers"]
                                               .toString(),
                                           style: new TextStyle(
-                                              fontSize: 15.0,
+                                              fontSize: 13.0,
                                               color: greycolor,
-                                              fontFamily: 'Muli-Light')),
+                                              fontFamily: 'Muli')),
                                       alignment: Alignment.center,
-                                      margin: EdgeInsets.fromLTRB(
-                                          10.0, 0.0, 0.0, 0.0),
                                     ),
                                     Container(
                                       child: Text("Winners",
                                           style: new TextStyle(
-                                              fontSize: 15.0,
+                                              fontSize: 13.0,
                                               color: greycolor,
-                                              fontFamily: 'Muli-Light')),
+                                              fontFamily: 'Muli')),
                                       alignment: Alignment.center,
-                                      margin: EdgeInsets.fromLTRB(
-                                          10.0, 0.0, 0.0, 0.0),
                                     ),
                                   ],
                                 ),
                               ),
-                              Container(
-                                child: Text(
-                                    "\u20B9" +
-                                        snapgetcontest["TicketPrice"]
-                                            .toString(),
-                                    style: new TextStyle(
-                                        fontSize: 15.0,
-                                        color: orangecolor,
-                                        fontFamily: 'Muli')),
-                                alignment: Alignment.center,
+                              Row(
+                                children: [
+                                  Container(
+                                    child: Image(
+                                      image: AssetImage(
+                                          'assets/images/trophy.png'),
+                                      height: 30,
+                                      width: 30,
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Text(
+                                        "\u20B9" +
+                                            snapgetcontest["TotalAmount"]
+                                                .toString(),
+                                        style: new TextStyle(
+                                            fontSize: 15.0,
+                                            color: orangecolor,
+                                            fontFamily: 'Muli')),
+                                    alignment: Alignment.center,
+                                  ),
+                                ],
                               ),
                               Container(
                                 margin: EdgeInsets.only(right: 10),
@@ -229,25 +307,22 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                                   children: [
                                     Container(
                                       child: Text(
-                                          snapgetcontest["TicketPrice"]
-                                              .toString(),
+                                          "\u20B9" +
+                                              snapgetcontest["TicketPrice"]
+                                                  .toString(),
                                           style: new TextStyle(
-                                              fontSize: 15.0,
+                                              fontSize: 13.0,
                                               color: greycolor,
-                                              fontFamily: 'Muli-Light')),
+                                              fontFamily: 'Muli')),
                                       alignment: Alignment.center,
-                                      margin: EdgeInsets.fromLTRB(
-                                          10.0, 0.0, 0.0, 0.0),
                                     ),
                                     Container(
                                       child: Text("Entry fee",
                                           style: new TextStyle(
-                                              fontSize: 15.0,
+                                              fontSize: 13.0,
                                               color: greycolor,
-                                              fontFamily: 'Muli-Light')),
+                                              fontFamily: 'Muli')),
                                       alignment: Alignment.center,
-                                      margin: EdgeInsets.fromLTRB(
-                                          10.0, 0.0, 0.0, 0.0),
                                     ),
                                   ],
                                 ),
@@ -257,19 +332,17 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                         ),
                         SizedBox(
                             child: Container(
-                          margin: EdgeInsets.all(10.0),
+                          margin: EdgeInsets.only(left: 30, right: 30),
                           child: Text(
-                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                            style: TextStyle(
-                                fontSize: 12.0,
-                                color: Colors.black,
-                                fontFamily: 'Muli'),
+                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.",
+                            style:
+                                TextStyle(fontSize: 12.0, fontFamily: 'Muli'),
                           ),
                           alignment: Alignment.center,
                         )),
                         SizedBox(
                             child: Container(
-                          margin: EdgeInsets.only(left: 12, right: 12),
+                          margin: EdgeInsets.only(left: 30, right: 30, top: 10),
                           decoration: BoxDecoration(
                               color: Color(0xFFFDE6D5),
                               borderRadius:
@@ -280,85 +353,35 @@ class _MycontestdetailState extends State<Mycontestdetail> {
                               Container(
                                   padding: EdgeInsets.all(5.0),
                                   width: 80,
-                                  margin:
-                                      EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
+                                  alignment: Alignment.center,
                                   child: Text("Rule Type",
                                       style: new TextStyle(
                                           fontSize: 14.0,
-                                          color: Colors.black,
-                                          fontFamily: 'Muli'))),
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Muli-Bold.ttf'))),
                               Container(
-                                  width: 70,
+                                  width: 80,
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.all(5.0),
                                   child: Text("Winners",
                                       style: new TextStyle(
                                           fontSize: 14.0,
-                                          color: Colors.black,
-                                          fontFamily: 'Muli'))),
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Muli-Bold.ttf'))),
                               Container(
-                                  width: 120,
+                                  width: 100,
                                   alignment: Alignment.center,
                                   padding: EdgeInsets.all(5.0),
                                   child: Text("Winners Prize",
                                       style: new TextStyle(
                                           fontSize: 14.0,
-                                          color: Colors.black,
-                                          fontFamily: 'Muli')))
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Muli-Bold.ttf')))
                             ],
                           ),
                         )),
-                        _myListView(context),
-                        SizedBox(
-                          child: GestureDetector(
-                              onTap: () => {
-                                    api.getStringValuesSF().then((value) => {
-                                          print("createdby " + value),
-                                          if (value ==
-                                              snapgetcontest["CreatedBy"])
-                                            {
-                                              Navigator.of(context)
-                                                  .pushReplacement(
-                                                      MaterialPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              JoinGame(
-                                                                  snapgetcontest)))
-                                            }
-                                          else
-                                            {
-                                              Navigator.of(context)
-                                                  .pushReplacement(
-                                                      MaterialPageRoute(
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              JoinGame(
-                                                                  snapgetcontest)))
-                                            }
-                                        })
-                                  },
-                              child: Container(
-                                margin: EdgeInsets.all(20.0),
-                                decoration: BoxDecoration(
-                                    color: Color(0xFFEE802E),
-                                    borderRadius:
-                                        new BorderRadius.circular(40)),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                        padding: EdgeInsets.all(10.0),
-                                        margin: EdgeInsets.fromLTRB(
-                                            10.0, 0.0, 0.0, 0.0),
-                                        child: Text("Join Game",
-                                            style: new TextStyle(
-                                                fontSize: 14.0,
-                                                color: Colors.white,
-                                                fontFamily: 'Muli'))),
-                                  ],
-                                ),
-                              )),
-                        )
+                        _myListView(context, rulelist),
+                        button(context)
                       ],
                     ),
                     decoration: BoxDecoration(

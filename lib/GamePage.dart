@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:htg/Mycontestdetail.dart';
 import 'package:htg/RestDatasource.dart';
 import 'package:htg/TabMaker.dart';
 import 'package:http/http.dart' as http;
@@ -24,9 +25,9 @@ class JoinGame extends StatelessWidget {
   }
 }
 
-Widget _myListView(BuildContext context) {
+Widget _myListView(BuildContext context, List<dynamic> ContestRules) {
   return ListView.builder(
-    itemCount: 10,
+    itemCount: ContestRules.length,
     primary: false,
     shrinkWrap: true,
     padding: EdgeInsets.only(top: 5),
@@ -41,7 +42,7 @@ Widget _myListView(BuildContext context) {
                 width: 80,
                 alignment: Alignment.center,
                 margin: EdgeInsets.fromLTRB(10.0, 0.0, 0.0, 0.0),
-                child: Text("First Rule",
+                child: Text(ContestRules[index]["RuleName"],
                     style: new TextStyle(
                         fontSize: 14.0,
                         color: Colors.black,
@@ -50,7 +51,7 @@ Widget _myListView(BuildContext context) {
                 width: 70,
                 alignment: Alignment.center,
                 padding: EdgeInsets.all(5.0),
-                child: Text("50",
+                child: Text(ContestRules[index]["Price"],
                     style: new TextStyle(
                         fontSize: 14.0,
                         color: Color(0xFFEE802E),
@@ -65,7 +66,7 @@ Widget _myListView(BuildContext context) {
                       color: Color(0xFF39B54A),
                       borderRadius: new BorderRadius.circular(5)),
                   alignment: Alignment.center,
-                  child: Text("\u20B9" + "1500",
+                  child: Text("\u20B9" + ContestRules[index]["Price"],
                       style: new TextStyle(
                           fontSize: 13.0,
                           color: Colors.white,
@@ -108,6 +109,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int lastnumber = 0;
   bool rightdesign = false;
 
+  RestDatasource api = RestDatasource();
+
   Future<String> getGetGenerateNumber() async {
     var res = await http.get(
         Uri.encodeFull(
@@ -139,11 +142,11 @@ class _MyHomePageState extends State<MyHomePage> {
     return "Success";
   }
 
-  Future<String> getTableNumbers() async {
+  Future<String> getTableNumbers(String userid) async {
     var res = await http.get(
         Uri.encodeFull(RestDatasource.createcontests +
             "/" +
-            contestdetail["CreatedBy"] +
+            userid +
             "/contestticket/" +
             contestdetail["_id"]),
         headers: {
@@ -152,6 +155,7 @@ class _MyHomePageState extends State<MyHomePage> {
         });
 
     var resBody = json.decode(res.body);
+    print(resBody);
 
     setState(() {
       List<dynamic> tablenumbersrows = [];
@@ -170,13 +174,19 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
+    api.getStringValuesSF().then((value) => this.getTableNumbers(value));
     this.getGetGenerateNumber();
-    this.getTableNumbers();
   }
 
   @override
   Widget build(BuildContext context) {
     ContestRules = contestdetail["ContestRules"];
+    setState(() {
+      Future.delayed(Duration(seconds: 2), () {
+        this.getGetGenerateNumber();
+      });
+    });
 
     return Scaffold(
         body: WillPopScope(
@@ -186,34 +196,48 @@ class _MyHomePageState extends State<MyHomePage> {
             Column(
               children: [
                 Container(
-                  height: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            child: Text("Housey The Game",
-                                style: new TextStyle(
-                                    fontSize: 20.0,
-                                    color: Colors.white,
-                                    fontFamily: 'Muli')),
-                          ),
-                          Container(
-                            child: Text("John Doe",
-                                style: new TextStyle(
-                                    fontSize: 12.0,
-                                    color: Colors.white,
-                                    fontFamily: 'Muli')),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                  color: orangecolor,
-                ),
+                    width: double.infinity,
+                    height: 120,
+                    color: Color(0xFFEE802E),
+                    child: Container(
+                        margin: EdgeInsets.only(left: 20, top: 55),
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            Mycontestdetail(
+                                                contestdetail["_id"])));
+                              },
+                              child: Container(
+                                alignment: Alignment.topCenter,
+                                margin: EdgeInsets.only(right: 20),
+                                child: Image(
+                                  image: AssetImage('assets/images/back.png'),
+                                  height: 30,
+                                  width: 30,
+                                ),
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(contestdetail["ContestName"],
+                                    style: new TextStyle(
+                                        fontSize: 15.0,
+                                        color: Colors.white,
+                                        fontFamily: 'Muli-Light')),
+                                Text("John Doe",
+                                    style: new TextStyle(
+                                        fontSize: 12.0,
+                                        color: Colors.white,
+                                        fontFamily: 'Muli'))
+                              ],
+                            ),
+                          ],
+                        ))),
                 Stack(
                   alignment: Alignment.topCenter,
                   children: [
@@ -274,17 +298,138 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ],
             ),
-            Container(
-                decoration: BoxDecoration(
-                    color: orangecolor,
-                    borderRadius: new BorderRadius.circular(20.0)),
-                padding:
-                    EdgeInsets.only(top: 5, bottom: 5, right: 20, left: 20),
-                child: Text("Claim",
-                    style: new TextStyle(
-                        fontSize: 14.0,
-                        color: Colors.white,
-                        fontFamily: 'Muli'))),
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                          //this right here
+                          child: Container(
+                        height: 150,
+                        width: 200,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 30,
+                              color: Color(0xFFFDE6D5),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    width: 60,
+                                    margin: EdgeInsets.only(left: 5),
+                                    child: Text("Rule Type",
+                                        style: new TextStyle(
+                                            fontSize: 12.0,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Muli')),
+                                  ),
+                                  Container(
+                                    width: 30,
+                                    child: Text("Total",
+                                        style: new TextStyle(
+                                            fontSize: 12.0,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Muli')),
+                                  ),
+                                  Container(
+                                    width: 60,
+                                    alignment: Alignment.center,
+                                    decoration:
+                                        BoxDecoration(color: orangecolor),
+                                    child: Text("Claimed",
+                                        style: new TextStyle(
+                                            fontSize: 12.0,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Muli')),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                padding: EdgeInsets.all(0),
+                                itemBuilder: (context, index) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      api.getStringValuesSF().then((value) =>
+                                          api.claimcontest(
+                                              contestdetail["_id"],
+                                              value,
+                                              ContestRules[index]["RuleId"],
+                                              context));
+                                    },
+                                    child: Container(
+                                      margin:
+                                          EdgeInsets.only(bottom: 10, top: 10),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            width: 60,
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                                ContestRules[index]["RuleName"],
+                                                style: new TextStyle(
+                                                    fontSize: 12.0,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Muli')),
+                                          ),
+                                          Container(
+                                            alignment: Alignment.center,
+                                            width: 30,
+                                            child: Text(
+                                                ContestRules[index]["Price"],
+                                                style: new TextStyle(
+                                                    fontSize: 12.0,
+                                                    color: Colors.black,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Muli')),
+                                          ),
+                                          Container(
+                                            alignment: Alignment.center,
+                                            width: 50,
+                                            child: Text("00",
+                                                style: new TextStyle(
+                                                    fontSize: 12.0,
+                                                    color: orangecolor,
+                                                    fontWeight: FontWeight.bold,
+                                                    fontFamily: 'Muli')),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                                itemCount: ContestRules.length,
+                              ),
+                            )
+                          ],
+                        ),
+                      ));
+                    });
+              },
+              child: Container(
+                  margin: EdgeInsets.only(bottom: 10),
+                  decoration: BoxDecoration(
+                      color: orangecolor,
+                      borderRadius: new BorderRadius.circular(20.0)),
+                  padding:
+                      EdgeInsets.only(top: 5, bottom: 5, right: 20, left: 20),
+                  child: Text("Claim",
+                      style: new TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.white,
+                          fontFamily: 'Muli'))),
+            ),
             Container(
               decoration: BoxDecoration(
                   border: Border.all(color: orangecolor, width: 2),
@@ -307,8 +452,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         itemBuilder: (context, index) {
                           int lastindex = tablenumbers0.length - 1;
 
+                          if (tablenumbers0[index] == 0) {
+                            tablenumbers0[index] = " ";
+                          }
+
                           if (index == lastindex) {
-                            if (selectednumber.contains(tablenumbers0[index]) &&
+                            if ((selectednumber
+                                        .contains(tablenumbers0[index]) ||
+                                    lastnumber == tablenumbers0[index] ||
+                                    contestnumbers
+                                        .contains(tablenumbers0[index])) &&
                                 tablenumbers0[index] != 0) {
                               return Container(
                                   width: 30,
@@ -359,7 +512,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ));
                           }
 
-                          if (selectednumber.contains(tablenumbers0[index]) &&
+                          if ((selectednumber.contains(tablenumbers0[index]) ||
+                                  lastnumber == tablenumbers0[index] ||
+                                  contestnumbers
+                                      .contains(tablenumbers0[index])) &&
                               tablenumbers0[index] != 0) {
                             return Container(
                                 width: 30,
@@ -430,6 +586,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         itemBuilder: (context, index) {
                           int lastindex = tablenumbers1.length - 1;
 
+                          if (tablenumbers1[index] == 0) {
+                            tablenumbers1[index] = " ";
+                          }
+
                           if (index == lastindex) {
                             if (selectednumber.contains(tablenumbers1[index]) &&
                                 tablenumbers1[index] != 0) {
@@ -482,7 +642,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ));
                           }
 
-                          if (selectednumber.contains(tablenumbers1[index]) &&
+                          if ((selectednumber.contains(tablenumbers1[index]) ||
+                                  lastnumber == tablenumbers1[index] ||
+                                  contestnumbers
+                                      .contains(tablenumbers1[index])) &&
                               tablenumbers1[index] != 0) {
                             return Container(
                                 width: 30,
@@ -549,8 +712,16 @@ class _MyHomePageState extends State<MyHomePage> {
                         itemBuilder: (context, index) {
                           int lastindex = tablenumbers2.length - 1;
 
+                          if (tablenumbers2[index] == 0) {
+                            tablenumbers2[index] = " ";
+                          }
+
                           if (index == lastindex) {
-                            if (selectednumber.contains(tablenumbers2[index]) &&
+                            if ((selectednumber
+                                        .contains(tablenumbers2[index]) ||
+                                    lastnumber == tablenumbers2[index] ||
+                                    contestnumbers
+                                        .contains(tablenumbers2[index])) &&
                                 tablenumbers2[index] != 0) {
                               return Container(
                                   width: 30,
@@ -601,7 +772,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ));
                           }
 
-                          if (selectednumber.contains(tablenumbers2[index]) &&
+                          if ((selectednumber.contains(tablenumbers2[index]) ||
+                                  lastnumber == tablenumbers2[index] ||
+                                  contestnumbers
+                                      .contains(tablenumbers2[index])) &&
                               tablenumbers2[index] != 0) {
                             return Container(
                                 width: 30,
@@ -702,13 +876,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             )),
-            _myListView(context)
+            _myListView(context, ContestRules)
           ],
         ),
       ),
       onWillPop: () async {
         return Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (BuildContext context) => CreateAndJoin()));
+            builder: (BuildContext context) =>
+                Mycontestdetail(contestdetail["_id"])));
       },
     ));
   }

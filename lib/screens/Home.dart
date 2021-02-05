@@ -11,7 +11,6 @@ import 'package:loading/loading.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 
-
 class Tab1 extends StatefulWidget {
   @override
   _Tab1State createState() => _Tab1State();
@@ -23,7 +22,7 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
   var greycolor = Color(0xFF8F8F8F);
   var orangecolor = Color(0xFFEE802E);
 
-  var _currentValue=0;
+  var _currentValue = 0;
 
   Future<String> getContest() async {
     var res = await http.get(Uri.encodeFull(RestDatasource.Contest), headers: {
@@ -153,9 +152,9 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                                       ["MaxPlayers"]
                                                   .toString(),
                                               style: new TextStyle(
-                                                  fontSize: 10.0,
+                                                  fontSize: 13.0,
                                                   color: greycolor,
-                                                  fontFamily: 'Muli-Light')),
+                                                  fontFamily: 'Muli')),
                                           alignment: Alignment.center,
                                           margin: EdgeInsets.fromLTRB(
                                               20.0, 0.0, 0.0, 0.0),
@@ -163,9 +162,9 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                         Container(
                                           child: Text("winners",
                                               style: new TextStyle(
-                                                  fontSize: 10.0,
+                                                  fontSize: 13.0,
                                                   color: greycolor,
-                                                  fontFamily: 'Muli-Light')),
+                                                  fontFamily: 'Muli')),
                                           alignment: Alignment.center,
                                           margin: EdgeInsets.fromLTRB(
                                               20.0, 0.0, 0.0, 0.0),
@@ -173,16 +172,29 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                       ],
                                     ),
                                   ),
-                                  Container(
-                                    child: Text(
-                                        "\u20B9" +
-                                            snapgetcontest[index]["TicketPrice"]
-                                                .toString(),
-                                        style: new TextStyle(
-                                            fontSize: 15.0,
-                                            color: orangecolor,
-                                            fontFamily: 'Muli')),
-                                    alignment: Alignment.center,
+                                  Row(
+                                    children: [
+                                      Container(
+                                        child: Image(
+                                          image: AssetImage(
+                                              'assets/images/trophy.png'),
+                                          height: 30,
+                                          width: 30,
+                                        ),
+                                      ),
+                                      Container(
+                                        child: Text(
+                                            "\u20B9" +
+                                                snapgetcontest[index]
+                                                        ["TotalAmount"]
+                                                    .toString(),
+                                            style: new TextStyle(
+                                                fontSize: 15.0,
+                                                color: orangecolor,
+                                                fontFamily: 'Muli')),
+                                        alignment: Alignment.center,
+                                      ),
+                                    ],
                                   ),
                                   Container(
                                     margin: EdgeInsets.only(right: 10),
@@ -190,23 +202,15 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                                       children: [
                                         Container(
                                           child: Text(
-                                              snapgetcontest[index]
-                                                      ["MaxPlayers"]
-                                                  .toString(),
+                                              "\u20B9" +
+                                                  snapgetcontest[index]
+                                                          ["TicketPrice"]
+                                                      .toString(),
                                               style: new TextStyle(
-                                                  fontSize: 10.0,
-                                                  color: greycolor,
-                                                  fontFamily: 'Muli-Light')),
-                                          alignment: Alignment.center,
-                                          margin: EdgeInsets.fromLTRB(
-                                              0.0, 0.0, 20.0, 0.0),
-                                        ),
-                                        Container(
-                                          child: Text("winners",
-                                              style: new TextStyle(
-                                                  fontSize: 10.0,
-                                                  color: greycolor,
-                                                  fontFamily: 'Muli-Light')),
+                                                  fontSize: 13.0,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: 'Muli')),
                                           alignment: Alignment.center,
                                           margin: EdgeInsets.fromLTRB(
                                               0.0, 0.0, 20.0, 0.0),
@@ -218,17 +222,49 @@ class _Tab1State extends State<Tab1> with AutomaticKeepAliveClientMixin<Tab1> {
                               ),
                             ),
                             Container(
-                              margin: EdgeInsets.only(right: 20 , left: 20 , bottom: 20),
-                              child: FAProgressBar(
-                                currentValue: 60,
-                                size: 10,
-                                maxValue: 150,
-                                changeColorValue: 100,
-                                border: Border.all(color: greycolor , width: 0.3),
-                                backgroundColor: Colors.white,
-                                progressColor: Color(0xFFEE802E),
-                                direction: Axis.horizontal,
-                                verticalDirection: VerticalDirection.up,
+                              margin: EdgeInsets.only(
+                                  left: 30, right: 30, bottom: 10),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: Container(
+                                    child: FAProgressBar(
+                                      currentValue: 60,
+                                      size: 10,
+                                      maxValue: 150,
+                                      changeColorValue: 100,
+                                      border: Border.all(
+                                          color: greycolor, width: 0.3),
+                                      backgroundColor: Colors.white,
+                                      progressColor: Color(0xFFEE802E),
+                                      direction: Axis.horizontal,
+                                      verticalDirection: VerticalDirection.up,
+                                    ),
+                                  )),
+                                  SizedBox(
+                                    child: GestureDetector(
+                                        child: Container(
+                                      margin: EdgeInsets.only(left: 30),
+                                      padding: EdgeInsets.only(left: 20 , right: 20 , top: 5 , bottom: 5),
+                                      decoration: BoxDecoration(
+                                          color: Color(0xFFEE802E),
+                                          borderRadius:
+                                              new BorderRadius.circular(20)),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: <Widget>[
+                                          Container(
+                                              child: Text("Join",
+                                                  style: new TextStyle(
+                                                      fontSize: 12.0,
+                                                      color: Colors.white,
+                                                      fontFamily: 'Muli'))),
+                                        ],
+                                      ),
+                                    )),
+                                  )
+                                ],
                               ),
                             )
                           ],

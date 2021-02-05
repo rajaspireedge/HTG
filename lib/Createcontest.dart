@@ -82,13 +82,14 @@ class _CreategameState extends State<Creategame> {
   //Method for showing the date picker
   void _pickDateDialog() {
     showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            //which date will display when user open the picker
-            firstDate: DateTime(1950),
-            //what will be the previous supported year in picker
-            lastDate: DateTime
-                .now()) //what will be the up to supported date in picker
+      context: context,
+      initialDate: DateTime.now(),
+
+      //which date will display when user open the picker
+      firstDate: DateTime(1950),
+      //what will be the previous supported year in picker
+      lastDate: DateTime(2100),
+    ) //what will be the up to supported date in picker
         .then((pickedDate) {
       //then usually do the future job
       if (pickedDate == null) {
@@ -858,7 +859,7 @@ class _CreategameState extends State<Creategame> {
                             am
                           ]);
 
-                      List rules = List();
+                      List rules = [];
 
                       rules.add(map);
 
@@ -871,9 +872,8 @@ class _CreategameState extends State<Creategame> {
                       apimap["NumberGenerateDuration"] = 10;
                       apimap["Rules"] = rules;
 
-                      api
-                          .getStringValuesSF()
-                          .then((value) => {api.postHttp(apimap, value , context)});
+                      api.getStringValuesSF().then(
+                          (value) => {api.postHttp(apimap, value, context)});
 
                       /*  api.getStringValuesSF().then((value) => {
                             api

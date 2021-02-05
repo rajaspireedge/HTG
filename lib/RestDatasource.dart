@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:htg/GamePage.dart';
 import 'package:htg/HomeScreen.dart';
 import 'package:htg/TabMaker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +19,8 @@ class RestDatasource {
   static final Signup = BASE_URL + "/v1/user/register";
   static final SIGNUPURL = BASE_URL + "/v1/user/signin";
   static final Contest = BASE_URL + "/v1/contest";
+  static final join = BASE_URL + "/v1/contest/join";
+  static final Claim = BASE_URL + "/v1/contest/claim";
   static final createcontests = BASE_URL + "/v1/user";
   static final rule = BASE_URL + "/v1/rule";
 
@@ -93,13 +96,82 @@ class RestDatasource {
     }
   }
 
-  void startcontest(String contestid, BuildContext context) async {
+
+  Future<dynamic> startcontest(String contestid, BuildContext context) async {
     try {
       Response response =
           await Dio().put(Contest + "/" + contestid + "/startcontest");
 
-      print(response.request.data);
       if (response.data["Status"] == "Success") {
+        Fluttertoast.showToast(
+            msg: response.data["Data"]["message"].toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+      } else {
+        Fluttertoast.showToast(
+            msg: response.data["Error"]["Message"].toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+      }
+      return response;
+    } catch (e) {
+      print(e);
+    }
+
+  }
+
+  void claimcontest(String contestid, String userid, String RuleID,
+      BuildContext context) async {
+    try {
+      Response response = await Dio().post(Claim , data: {
+        "UserId" : userid,
+        "ContestId" : contestid,
+        "RuleId" : RuleID,
+      });
+
+      print(response);
+      if (response.data["Status"] == "Success") {
+        Fluttertoast.showToast(
+            msg: response.data["Data"]["message"].toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+      } else {
+        Fluttertoast.showToast(
+            msg: response.data["Error"]["Message"].toString(),
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIos: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void joincontest(String contestid, String userid, Map<String, dynamic> maps,
+      BuildContext context) async {
+    try {
+      Response response = await Dio().post(join, data: {
+        "UserId": userid,
+        "ContestId": contestid,
+      });
+
+      print(userid);
+      print(contestid);
+      if (response.data["Status"] == "Success") {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (BuildContext context) => JoinGame(maps)));
+
         Fluttertoast.showToast(
             msg: response.data["Data"]["message"].toString(),
             toastLength: Toast.LENGTH_SHORT,

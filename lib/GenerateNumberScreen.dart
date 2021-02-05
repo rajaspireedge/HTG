@@ -43,6 +43,28 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
   bool boxvisible = false;
   int lastnumber = 0;
 
+  Future<String> getContest(String userid) async {
+    var res = await http.get(
+        Uri.encodeFull(RestDatasource.Contest +
+            "/" +
+            contestdetail["_id"] +
+            "/details?UserId=" +
+            userid),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        });
+
+    var resBody = json.decode(res.body);
+    print(res.body);
+
+    setState(() {
+      contestdetail = resBody["Data"];
+    });
+
+    return "Success";
+  }
+
   Future<String> getGenerateNumber() async {
     var res = await http.post(
         Uri.encodeFull(
@@ -98,11 +120,13 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
   @override
   Widget build(BuildContext context) {
     var color = Color(0xFFEE802E);
+    bool buttonvis = false;
 
     RestDatasource api = new RestDatasource();
 
     Widget Startbutton() {
       if (contestdetail["IsRunning"] == true) {
+        buttonvis = true;
         return GestureDetector(
           onTap: () {
             getGenerateNumber();
@@ -120,8 +144,14 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
         );
       }
 
+      buttonvis = false;
+
+
       return GestureDetector(
-        onTap: () {},
+        onTap: () {
+          api.startcontest(contestdetail["_id"], context).then((value) =>
+              api.getStringValuesSF().then((value) => getContest(value)));
+        },
         child: Container(
             decoration: BoxDecoration(
                 color: orangecolor,
@@ -193,112 +223,129 @@ class _GenerateNumberFullState extends State<GenerateNumberFull> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Container(
-                        height: 100,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  child: Text("Housey The Game",
-                                      style: new TextStyle(
-                                          fontSize: 20.0,
-                                          color: Colors.white,
-                                          fontFamily: 'Muli')),
-                                ),
-                                Container(
-                                  child: Text("John Doe",
-                                      style: new TextStyle(
-                                          fontSize: 12.0,
-                                          color: Colors.white,
-                                          fontFamily: 'Muli')),
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                        color: color,
-                      ),
-                      Card(
-                        child: Container(
-                          height: 50,
-                          margin: EdgeInsets.all(20),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
+                          width: double.infinity,
+                          height: 120,
+                          color: Color(0xFFEE802E),
+                          child: Container(
+                              margin: EdgeInsets.only(left: 20, top: 55),
+                              child: Row(
                                 children: [
-                                  SizedBox(
-                                      height: 100,
-                                      child: LimitedBox(
-                                        maxWidth: 130,
-                                        child: ListView.builder(
-                                          shrinkWrap: true,
-                                          controller: controller,
-                                          reverse: true,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, index) {
-                                            return Container(
-                                              margin: EdgeInsets.only(
-                                                  left: 5, right: 10),
-                                              alignment: Alignment.center,
-                                              child: Text(
-                                                  contestnumbers[index]
-                                                      .toString(),
-                                                  style: new TextStyle(
-                                                      fontSize: 14.0,
-                                                      color: Colors.grey,
-                                                      fontFamily: 'Muli')),
-                                            );
-                                          },
-                                          itemCount: contestnumbers.length,
-                                        ),
-                                      )),
-                                  Visibility(
-                                      visible: boxvisible,
-                                      child: Card(
-                                        elevation: 10,
-                                        child: Container(
-                                          height: 50,
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                            alignment: Alignment.center,
-                                            child: Text(lastnumber.toString(),
-                                                style: new TextStyle(
-                                                    fontSize: 20.0,
-                                                    color: orangecolor,
-                                                    fontWeight: FontWeight.bold,
-                                                    fontFamily: 'Muli')),
-                                          ),
-                                          width: 50,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(color: color)),
-                                        ),
-                                      )),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.of(context).pushReplacement(
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  Mycontestdetail(
+                                                      contestdetail["_id"])));
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.topCenter,
+                                      margin: EdgeInsets.only(right: 20),
+                                      child: Image(
+                                        image: AssetImage(
+                                            'assets/images/back.png'),
+                                        height: 30,
+                                        width: 30,
+                                      ),
+                                    ),
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(contestdetail["ContestName"],
+                                          style: new TextStyle(
+                                              fontSize: 15.0,
+                                              color: Colors.white,
+                                              fontFamily: 'Muli-Light')),
+                                      Text("John Doe",
+                                          style: new TextStyle(
+                                              fontSize: 12.0,
+                                              color: Colors.white,
+                                              fontFamily: 'Muli'))
+                                    ],
+                                  ),
                                 ],
+                              ))),
+                      Stack(
+                        alignment: Alignment.topCenter,
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Container(
+                              height: 50,
+                              width: 130,
+                              margin: EdgeInsets.only(left: 20),
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                padding: EdgeInsets.all(0),
+                                controller: controller,
+                                reverse: true,
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  return Container(
+                                      margin:
+                                          EdgeInsets.only(left: 5, right: 10),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                                contestnumbers[index]
+                                                    .toString(),
+                                                style: new TextStyle(
+                                                    fontSize: 14.0,
+                                                    color: Colors.grey,
+                                                    fontFamily: 'Muli')),
+                                          )
+                                        ],
+                                      ));
+                                },
+                                itemCount: contestnumbers.length,
                               ),
-                              Container(
+                            ),
+                          ),
+                          Visibility(
+                            visible: boxvisible,
+                            child: Container(
+                              child: Card(
+                                elevation: 10,
+                                shadowColor: Colors.white,
+                                child: Container(
+                                  height: 50,
+                                  width: 50,
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    child: Text(lastnumber.toString(),
+                                        style: new TextStyle(
+                                            fontSize: 20.0,
+                                            color: orangecolor,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Muli')),
+                                  ),
+                                  color: Colors.white,
+                                ),
+                              ),
+                              transform:
+                                  Matrix4.translationValues(0.0, -30.0, 0.0),
+                            ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Container(
+                                margin: EdgeInsets.only(top: 10, right: 10),
                                 decoration: BoxDecoration(
                                     color: Color(0xFFEE802E),
                                     borderRadius:
                                         new BorderRadius.circular(20)),
-                                child: Row(
-                                  children: <Widget>[
-                                    GestureDetector(
-                                      onTap: () {
-                                        api.startcontest(
-                                            contestdetail["_id"], context);
-                                      },
-                                      child: Startbutton(),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    api.startcontest(
+                                        contestdetail["_id"], context);
+                                  },
+                                  child: Startbutton(),
+                                )),
+                          )
+                        ],
                       ),
                       Container(
                         height: 100,
